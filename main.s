@@ -15,8 +15,7 @@ d_message:
     .ascii "Found D\n"
 f_message:
     .ascii "Found F\n"
-clear:
-    .ascii "\033[2J\033[H"
+
 
 .global main
 
@@ -60,11 +59,7 @@ not_arrow:
     cmpb $'d, buffer(%rip)
     jne flag
     
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea clear(%rip), %rsi                   # Address of message
-    mov $7, %rdx                            # Length of message
-    syscall
+    call clear
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
@@ -77,11 +72,7 @@ flag:
     cmpb $'f, buffer(%rip)
     jne detect
     
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea clear(%rip), %rsi                   # Address of message
-    mov $7, %rdx                            # Length of message
-    syscall
+    call clear
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
@@ -133,7 +124,6 @@ done:
     #epilogue
     movq %rbp, %rsp
     popq %rbp
-
 
     movq $0, %rdi
     call exit

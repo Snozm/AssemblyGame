@@ -5,9 +5,12 @@ new_termios:
     .space 60
 
 .text
+    clearSeq:
+    .ascii "\033[2J\033[H"
 
 .global enterRaw
 .global enterCooked
+.global clear
 
 # Syscall: ioctl(fd, TCGETS, &old_termios)
 enterRaw:
@@ -53,6 +56,23 @@ enterCooked:
     movq $0x5402, %rsi          # TCsETS (to set terminal attributes)
     lea old_termios(%rip), %rdx # address of buffer to store the termios structure
     syscall                     # make the syscall
+
+    #epilogue
+    movq %rbp, %rsp
+    popq %rbp
+
+ret
+
+clear:
+    #prologue
+    pushq %rbp
+	movq %rsp, %rbp
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea clearSeq(%rip), %rsi                   # Address of message
+    mov $7, %rdx                            # Length of message
+    syscall
 
     #epilogue
     movq %rbp, %rsp
