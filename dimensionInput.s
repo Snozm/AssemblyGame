@@ -12,11 +12,14 @@ invalidDimMessage:
     .ascii "Invalid dimensions, try again\n\n\n"
 
 .global getDim
+.global width
+.global height
 
 getDim:
     #prologue
     pushq %rbp
 	movq %rsp, %rbp
+
 invalidReturn:
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
@@ -58,8 +61,6 @@ bufferCheckedWidth:
 
 widthNummed:
 
-    addb $48, width(%rip)
-
     mov $0, %rax                        # Syscall number for read
     mov $0, %rdi                        # File descriptor 0 (stdin)
     lea buffer(%rip), %rsi              # Address of buffer
@@ -94,8 +95,6 @@ bufferCheckedHeight:
 
 heightNummed:
 
-    addb $48, height(%rip)
-
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
     lea width(%rip), %rsi               # Address of message
@@ -112,7 +111,8 @@ heightNummed:
     movq %rbp, %rsp
     popq %rbp
 
-    ret
+ret
+
 flush:
     mov $0, %rax                             # Syscall number for write
     mov $0, %rdi                             # File descriptor 1 (stdout)
@@ -120,7 +120,7 @@ flush:
     mov $1, %rdx                            # Length of message
     syscall
 
-    cmpb $'\n, buffer(%rip)
+    cmpb $'\n, buffer(%rip)                 # Check if the newline has been found
     jne flush
 
 invalidDimInput:

@@ -26,6 +26,8 @@ main:
 
     call getDim
 
+    call getMine
+
     call enterRaw                    
 
 detect:
