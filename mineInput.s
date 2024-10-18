@@ -92,8 +92,8 @@ done:
 ret
 
 flush:
-    mov $0, %rax                            # Syscall number for write
-    mov $0, %rdi                            # File descriptor 1 (stdout)
+    mov $0, %rax                            # Syscall number for read
+    mov $0, %rdi                            # File descriptor 0 (stdin)
     lea buffer(%rip), %rsi                  # Address of message
     mov $1, %rdx                            # Length of message
     syscall

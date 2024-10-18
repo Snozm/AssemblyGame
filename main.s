@@ -45,9 +45,12 @@ columnIterator:
     incq %r8                                # Increment column counter
 
     rowIterator:
+        movb $32, (%rdi)                    # Set cell character to space
         cmpq %rcx, %r8                      # Compare column counter with height
         jne notBottom
-        orw $16, (%rdi)                     # Set bottom border flag the cell to 1
+        incq %rdi
+        orb $16, (%rdi)                     # Set bottom border flag the cell to 1
+        decq %rdi
 
         notBottom:
         incq %r9                            # Increment row counter
@@ -58,7 +61,9 @@ columnIterator:
     jmp rowIterator 
 
     rowEnd:
-    orw $32, (%rdi)                         # Set right border flag the cell to 1
+    incq %rdi
+    orb $32, (%rdi)                         # Set right border flag the cell to 1
+    decq %rdi
     addq $2, %rdi                           # Move to next cell in mineArray
 
     movq $0, %r9                            # Reset row counter
