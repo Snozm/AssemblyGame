@@ -9,9 +9,9 @@ mine_prompt:
 invalidMineMessage:
     .ascii "Invalid mine count, try again\n\n\n"
 
-.global getMine
+.global getMines
 .global mines
-getMine:
+getMines:
     #prologue
     pushq %rbp
 	movq %rsp, %rbp

@@ -28,7 +28,43 @@ main:
 
     call getDim
 
-    call getMine
+    call getMines
+
+# Initialize border flags
+    leaq mineArray(%rip), %rdi              # Load address of mineArray in rdi
+    movq $0, %r8                            # Initialize column counter
+    movq $0, %r9                            # Initialize row counter
+
+    leaq height(%rip), %rcx                 # Load height address in rcx
+    movq (%rcx), %rcx                       # Store height in rcx
+    
+    leaq width(%rip), %rax                  # Load width address in rax
+    movq (%rax), %rax                       # Store width in rax
+
+columnIterator:
+    incq %r8                                # Increment column counter
+
+    rowIterator:
+        cmpq %rcx, %r8                      # Compare column counter with height
+        jne notBottom
+        orw $16, (%rdi)                     # Set bottom border flag the cell to 1
+
+    notBottom:
+        incq %r9                            # Increment row counter
+        cmpq %rax, %r9                      # Compare row counter with width
+        je rowEnd
+
+        addq $2, %rdi                       # Move to next cell in mineArray       
+        jmp rowIterator 
+
+    rowEnd:
+    orw $32, (%rdi)                         # Set right border flag the cell to 1
+    addq $2, %rdi                           # Move to next cell in mineArray
+
+    movq $0, %r9                            # Reset row counter
+
+    cmpq %rcx, %r8                          # Compare column counter with height
+jne columnIterator 
 
     call enterRaw                    
 
