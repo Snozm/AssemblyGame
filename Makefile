@@ -1,4 +1,4 @@
-objects = build/main.o build/console.o build/dimensionInput.o build/mineInput.o
+objects = build/main.o build/console.o build/dimensionInput.o build/mineInput.o build/draw.o
 .PHONY: clean
 
 kaboom: $(objects)

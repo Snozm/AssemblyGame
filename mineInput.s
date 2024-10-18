@@ -85,13 +85,6 @@ done:
     jg invalidMineInput
     movw %ax, mines(%rip)                   # Store mine count
 
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea mines(%rip), %rsi                   # Address of message
-    mov $2, %rdx                            # Length of message
-    syscall
-
-
     #epilogue
     movq %rbp, %rsp
     popq %rbp
