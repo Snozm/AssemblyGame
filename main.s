@@ -1,6 +1,8 @@
 .bss
 buffer:
     .skip 3       # Reserve space for 3 characters (escape sequence)
+mineArray:
+    .skip 3200   # Reserve space for 40x40 mine array
 
 .text
 up_message:
@@ -18,7 +20,7 @@ f_message:
 
 
 .global main
-
+.global mineArray
 main:
     #prologue
     pushq %rbp
