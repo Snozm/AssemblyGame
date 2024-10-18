@@ -10,7 +10,7 @@ invalidMineMessage:
     .ascii "Invalid mine count, try again\n\n\n"
 
 .global getMine
-
+.global mines
 getMine:
     #prologue
     pushq %rbp
