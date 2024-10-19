@@ -190,6 +190,7 @@ bottomLoop:
 
     call newLine
 
+    subq %8, %rsp                           # Remove stage counter from stack
     popq %rbx                               # Restore registers
     popq %r12
     popq %r13
