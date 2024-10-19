@@ -94,11 +94,30 @@ columnIterator:
         mov $1, %rdx                        # Length of message
         syscall
 
+        incq %rbx                           # Move to flags of cell
+        movq (%rbx), %rax                   # Load flags of cell
+        decq %rbx                           # Move back to cell
+
+        andq $4, %rax                       
+        cmpq $4, %rax                       # Check if cell is opened
+        je openedCell
+
+        mov $1, %rax                        # Syscall number for write
+        mov $1, %rdi                        # File descriptor 1 (stdout)
+        lea cellPadding(%rip), %rsi         # Address of padding
+        mov $1, %rdx                        # Length of message
+        syscall
+
+        jmp finishCell
+
+        openedCell:
         mov $1, %rax                        # Syscall number for write
         mov $1, %rdi                        # File descriptor 1 (stdout)
         mov %rbx, %rsi                      # Address of character
         mov $1, %rdx                        # Length of message
         syscall
+
+        finishCell:
 
         mov $1, %rax                        # Syscall number for write
         mov $1, %rdi                        # File descriptor 1 (stdout)
@@ -190,7 +209,7 @@ bottomLoop:
 
     call newLine
 
-    subq %8, %rsp                           # Remove stage counter from stack
+    subq $8, %rsp                           # Remove stage counter from stack
     popq %rbx                               # Restore registers
     popq %r12
     popq %r13

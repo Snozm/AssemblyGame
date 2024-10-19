@@ -45,7 +45,7 @@ columnIterator:
     incq %r8                                # Increment column counter
 
     rowIterator:
-        movb $32, (%rdi)                    # Set cell character to space
+        #movb $32, (%rdi)                    # Set cell character to space
         cmpq %rcx, %r8                      # Compare column counter with height
         jne notBottom
         incq %rdi
