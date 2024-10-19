@@ -1,6 +1,6 @@
 .text
 cellTop:
-    .ascii "+---"
+    .ascii "---"
 cellCorner:
     .ascii "+"
 cellPadding:
@@ -61,8 +61,14 @@ columnIterator:
         
         mov $1, %rax                        # Syscall number for write
         mov $1, %rdi                        # File descriptor 1 (stdout)
+        lea cellCorner(%rip), %rsi          # Address of bottom border
+        mov $1, %rdx                        # Length of message
+        syscall
+
+        mov $1, %rax                        # Syscall number for write
+        mov $1, %rdi                        # File descriptor 1 (stdout)
         lea cellTop(%rip), %rsi             # Address of top border
-        mov $4, %rdx                        # Length of message
+        mov $3, %rdx                        # Length of message
         syscall
 
         jmp rowCheck                        # Check if row is complete
@@ -158,8 +164,14 @@ bottomLoop:
     
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellCorner(%rip), %rsi              # Address of bottom corner
+    mov $1, %rdx                            # Length of message
+    syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
     lea cellTop(%rip), %rsi                 # Address of bottom border
-    mov $4, %rdx                            # Length of message
+    mov $3, %rdx                            # Length of message
     syscall
 
     incq %r14                               # Increment row counter
