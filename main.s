@@ -73,7 +73,11 @@ not_arrow:
     cmpb $'d, buffer(%rip)
     jne flag
 
-    call mineInit
+    cmpq $0, (%rsp)                         # Check if dig hasn't happened 
+    jne detect
+
+    call mineInit                           # Initialize mines around cursor
+    notq (%rsp)                             # Set dig happened to 1
 
     jmp detect
 flag:
