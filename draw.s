@@ -307,6 +307,29 @@ rowIterator:
     mov $1, %rdx                            # Length of message
     syscall
 
+    incq %rbx                           # Move to flags of cell
+    movzb (%rbx), %rax                  # Load flags of cell
+    decq %rbx                           # Move back to cell
+
+    andb $1, %al                       
+    cmpb $1, %al                        # Check if cell has cursor
+    je openCursor
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi           # Address of white text
+    mov $24, %rdx                       # Length of message
+    syscall
+
+    jmp finishCell
+
+    openCursor:
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea yellowText(%rip), %rsi          # Address of yellow text
+    mov $25, %rdx                       # Length of message
+    syscall
+
     finishCell:
 
     mov $1, %rax                            # Syscall number for write
