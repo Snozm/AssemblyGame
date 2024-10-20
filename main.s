@@ -136,15 +136,30 @@ flag:
     cmpb $'f, buffer(%rip)
     jne detect
     
-    call clear
+    leaq mineArray(%rip), %rdi
+    addq %rbx, %rdi
+    addq %rbx, %rdi
+    incq %rdi
 
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea f_message(%rip), %rsi               # Address of message
-    mov $8, %rdx                            # Length of message
-    syscall
+    movzb (%rdi), %rax                      # Load current cell flags
 
-    jmp done
+    andb $4, %al                            # Check if cell is opened
+    cmpb $4, %al
+    je detect
+
+    movzb (%rdi), %rax                      # Load current cell flags
+
+    andb $8, %al                            # Check if cell is flagged
+    cmpb $8, %al
+    jne flagSet
+
+    andb $0b11110111, (%rdi)                # Set flagged flag to 0
+    jmp detect
+
+    flagSet:
+    orb $8, (%rdi)                          # Set flagged flag to 1
+
+    jmp detect
 
 up_arrow:
     movq %rbx, %rax

@@ -1,4 +1,6 @@
 .text
+flagSymbol:
+    .ascii "P"
 cellTop:
     .ascii "---"
 cellCorner:
@@ -13,10 +15,14 @@ whiteText:
     .ascii "\033[38;2;255;255;255m\033[25m"
 yellowText:
     .ascii "\033[38;2;255;255;0m\033[1m\033[5m"
+redText:
+    .ascii "\033[38;2;255;0;0m\033[25m"
 lightGrayBackground:
     .ascii "\033[48;2;170;170;170m"
 darkGrayBackground:
     .ascii "\033[48;2;100;100;100m"
+orangeBackground:
+    .ascii "\033[48;2;255;140;0m"
 reset:
     .ascii "\033[0m"
 
@@ -78,12 +84,6 @@ rowIterator:
     mov $24, %rdx                           # Length of message
     syscall
     
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellPadding(%rip), %rsi             # Address of empty space
-    mov $1, %rdx                            # Length of message
-    syscall
-
     incq %rbx                               # Move to flags of cell
     movb (%rbx), %al                        # Load flags of cell
     decq %rbx                               # Move back to cell
@@ -91,6 +91,20 @@ rowIterator:
     andb $4, %al                       
     cmpb $4, %al                            # Check if cell is opened
     je openedCell
+
+    incq %rbx                               # Move to flags of cell
+    movb (%rbx), %al                        # Load flags of cell
+    decq %rbx                               # Move back to cell
+
+    andb $8, %al                       
+    cmpb $8, %al                            # Check if cell is opened
+    je flaggedCell
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellPadding(%rip), %rsi             # Address of empty space
+    mov $1, %rdx                            # Length of message
+    syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
@@ -100,7 +114,64 @@ rowIterator:
 
     jmp finishCell
 
+    flaggedCell:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea redText(%rip), %rsi                 # Address of red text
+    mov $20, %rdx                           # Length of message
+    syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea orangeBackground(%rip), %rsi        # Address of orange background
+    mov $17, %rdx                           # Length of message
+    syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellPadding(%rip), %rsi             # Address of empty space
+    mov $1, %rdx                            # Length of message
+    syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea flagSymbol(%rip), %rsi              # Address of flag
+    mov $1, %rdx                            # Length of message
+    syscall
+
+    incq %rbx                           # Move to flags of cell
+    movzb (%rbx), %rax                  # Load flags of cell
+    decq %rbx                           # Move back to cell
+
+    andb $1, %al                       
+    cmpb $1, %al                        # Check if cell has cursor
+    je flaggedCursor
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi           # Address of white text
+    mov $24, %rdx                       # Length of message
+    syscall
+
+    jmp finishCell
+
+    flaggedCursor:
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea yellowText(%rip), %rsi          # Address of yellow text
+    mov $25, %rdx                       # Length of message
+    syscall
+
+    jmp finishCell
+
+
     openedCell:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellPadding(%rip), %rsi             # Address of empty space
+    mov $1, %rdx                            # Length of message
+    syscall
+
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
     mov %rbx, %rsi                          # Address of character
