@@ -69,9 +69,7 @@ columnIterator:
     rowEnd:
     incq %rdi
     orb $32, (%rdi)                         # Set right border flag the cell to 1
-    decq %rdi
-    
-    addq $2, %rdi                           # Move to next cell in mineArray
+    incq %rdi                               # Move to next cell in mineArray
 
     movq $0, %r9                            # Reset row counter
 
@@ -80,9 +78,14 @@ jne columnIterator
 
     call enterRaw
 
-    call draw             
+    pushq $0                                # Stack alignment
+    pushq %rbx                              # Save cursor index register
+
+    movq $0, %rbx                           # Initialize cursor index to 1
 
 detect:
+    call draw
+
     # Read 3 bytes from stdin
     mov $0, %rdi                        # File descriptor 0 (stdin)
     lea buffer(%rip), %rsi              # Address of buffer
@@ -97,6 +100,13 @@ detect:
     # Check second byte '[' (0x5B)
     cmpb $0x5B, buffer+1(%rip)
     jne not_arrow
+
+    leaq mineArray(%rip), %rdi
+    addq %rbx, %rdi
+    addq %rbx, %rdi
+    incq %rdi
+
+    andb $254, (%rdi)             
 
     # Check for the specific arrow key (third byte)
     cmpb $0x41, buffer+2(%rip)              # Up arrow: 0x41
@@ -137,43 +147,99 @@ flag:
     jmp done
 
 up_arrow:
-    # Code to handle up arrow
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea up_message(%rip), %rsi              # Address of message
-    mov $17, %rdx                           # Length of message
-    syscall
-    jmp detect
+    movq %rbx, %rax
+    leaq width(%rip), %rcx                  # Load width address in rcx
+    movzb (%rcx), %rcx                      # Store width in rcx
+    movq $0, %rdx                           # Clear rdx
+
+    subq %rcx, %rbx                         # Move to upper cell
+
+    divq %rcx
+    cmpq $0, %rax
+    jne arrowDone
+    
+    leaq height(%rip), %rdx                 # Load height address in rdx
+    movzb (%rdx), %rdx                      # Store height in rdx
+    
+    upLoop:
+        decq %rdx                           # Decrement height counter
+
+        addq %rcx, %rbx                     # Move to lower cell
+
+        cmpq $0, %rdx                       # Check if height counter is 0
+        jne upLoop
+
+jmp arrowDone
 
 down_arrow:
-    # Code to handle down arrow
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea down_message(%rip), %rsi            # Address of message
-    mov $19, %rdx                           # Length of message
-    syscall
-    jmp detect
+    movq %rbx, %rax
+    leaq width(%rip), %rcx                  # Load width address in rcx
+    movzb (%rcx), %rcx                      # Store width in rcx
+    movq $0, %rdx                           # Clear rdx
+
+    leaq height(%rip), %r8                  # Load height address in r8
+    movzb (%r8), %r8                        # Store height in r8
+    decq %r8                                # Decrement height 
+
+    addq %rcx, %rbx                         # Move to lower cell
+
+    divq %rcx
+    cmpq %r8, %rax
+    jne arrowDone
+
+    incq %r8
+
+    downLoop:
+        decq %r8                            # Decrement height counter
+
+        subq %rcx, %rbx                     # Move to lower cell
+
+        cmpq $0, %r8                        # Check if height counter is 0
+        jne downLoop
+
+jmp arrowDone
 
 right_arrow:
-    # Code to handle right arrow
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea right_message(%rip), %rsi
-    mov $20, %rdx                           # Length of message
-    syscall
-    jmp detect
+
+    movq %rbx, %rax
+    leaq width(%rip), %rcx                  # Load width address in rcx
+    movzb (%rcx), %rcx                      # Store width in rcx
+    movq $0, %rdx                           # Clear rdx
+
+    incq %rbx
+
+    divq %rcx
+    decq %rcx
+    
+    cmpq %rcx, %rdx
+    jne arrowDone          
+
+    subq %rcx, %rbx                         # Move cursor to left border
+    decq %rbx
+
+jmp arrowDone
 
 left_arrow:
-    # Code to handle left arrow
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea left_message(%rip), %rsi
-    mov $19, %rdx                           # Length of message
-    syscall
-    jmp detect
+    movq %rbx, %rax
+    leaq width(%rip), %rcx                  # Load width address in rcx
+    movzb (%rcx), %rcx                      # Store width in rcx
+    movq $0, %rdx                           # Clear rdx
+
+    decq %rbx
+
+    divq %rcx
+    cmpq $0, %rdx
+    jne arrowDone          
+
+    addq %rcx, %rbx                         # Move cursor to right border
+
+jmp arrowDone
+
 done:
 
     call enterCooked                        # Restore terminal
+
+    popq %rbx                              # Restore cursor index register
 
     #epilogue
     movq %rbp, %rsp
@@ -182,3 +248,12 @@ done:
     movq $0, %rdi
     call exit
     
+arrowDone:
+    leaq mineArray(%rip), %rdi              # Load address of mineArray in rdi
+    addq %rbx, %rdi                         # Move to cell after cursor
+    addq %rbx, %rdi
+
+    incq %rdi                               # Move to cursor cell flags
+    orb $1, (%rdi)                          # Move cursor flag
+
+    jmp detect

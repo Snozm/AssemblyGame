@@ -10,7 +10,9 @@ cellWall:
 newline:
     .ascii "\n"
 whiteText:
-    .ascii "\033[38;2;255;255;255m"
+    .ascii "\033[38;2;255;255;255m\033[25m"
+yellowText:
+    .ascii "\033[38;2;255;255;0m\033[1m\033[5m"
 lightGrayBackground:
     .ascii "\033[48;2;170;170;170m"
 darkGrayBackground:
@@ -27,48 +29,53 @@ draw:
 
     call clear
 
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi               # Address of white text
+    mov $24, %rdx                           # Length of message
+    syscall
+
     pushq %rbx                              # Save registers
     pushq $0                                # Push 0 for stage counter
 
     leaq mineArray(%rip), %rbx              # Load address of mineArray in rbx
 
 rowIterator:
-    call chooseBackground
-
     cmpq $0, (%rsp)                         # Check if stage counter is 0
     jne middlePart
 
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi               # Address of white text
-    mov $19, %rdx                           # Length of message
-    syscall
-    
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellCorner(%rip), %rsi              # Address of bottom border
-    mov $1, %rdx                            # Length of message
-    syscall
-
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellTop(%rip), %rsi                 # Address of top border
-    mov $3, %rdx                            # Length of message
-    syscall
+    call cursorTopLogic
 
     jmp rowCheck                            # Check if row is complete
 
     middlePart:
+    call chooseBackground
+
+    incq %rbx                               # Move to flags of cell
+    movzb (%rbx), %rax                      # Load flags of cell
+    decq %rbx                               # Move back to cell
+
+    andb $1, %al                       
+    cmpb $1, %al                            # Check if cell has cursor
+    jne notCursorMiddle
+
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi               # Address of white text
-    mov $19, %rdx                           # Length of message
+    lea yellowText(%rip), %rsi              # Address of yellow text
+    mov $25, %rdx                           # Length of message
     syscall
 
+    notCursorMiddle:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
     lea cellWall(%rip), %rsi                # Address of cell wall
     mov $1, %rdx                            # Length of message
+    syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi               # Address of white text
+    mov $24, %rdx                           # Length of message
     syscall
     
     mov $1, %rax                            # Syscall number for write
@@ -108,11 +115,26 @@ rowIterator:
     mov $1, %rdx                            # Length of message
     syscall
 
+    incq %rbx                           # Move to flags of cell
+    movzb (%rbx), %rax                  # Load flags of cell
+    decq %rbx                           # Move back to cell
+
+    andb $1, %al                       
+    cmpb $1, %al                        # Check if cell has cursor
+    jne rowCheck
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea yellowText(%rip), %rsi          # Address of yellow text
+    mov $25, %rdx                       # Length of message
+    syscall
+
     rowCheck:
     incq %rbx                               # Move to cell flags
-    movb $32, %al                           # Initialize right border checker
-    andb (%rbx), %al                        # Check if right border is set
+    movzb (%rbx), %rax                      # Check if right border is set
     decq %rbx                               # Move back to cell
+
+    andb $32, %al                           # Initialize right border checker
     cmpb $32, %al                           # Compare right border flag with 1
     je rowEnd
 
@@ -135,12 +157,30 @@ rowIterator:
     pipePart:
         call chooseBackground
 
+        incq %rbx                           # Move to flags of cell
+        movzb (%rbx), %rax                  # Load flags of cell
+        decq %rbx                           # Move back to cell
+
+        andb $1, %al                       
+        cmpb $1, %al                        # Check if cell has cursor
+        jne notCursorRowEnd
+
+        mov $1, %rax                        # Syscall number for write
+        mov $1, %rdi                        # File descriptor 1 (stdout)
+        lea yellowText(%rip), %rsi          # Address of yellow text
+        mov $25, %rdx                       # Length of message
+        syscall
+        
+        jmp cursorRowEnd
+
+        notCursorRowEnd:
         mov $1, %rax                        # Syscall number for write
         mov $1, %rdi                        # File descriptor 1 (stdout)
         lea whiteText(%rip), %rsi           # Address of white text
-        mov $19, %rdx                       # Length of message
+        mov $24, %rdx                       # Length of message
         syscall
-        
+
+        cursorRowEnd:
         mov $1, %rax                        # Syscall number for write
         mov $1, %rdi                        # File descriptor 1 (stdout)
         lea cellWall(%rip), %rsi            # Address of cell wall
@@ -169,18 +209,59 @@ jne rowIterator
     subq %rax, %rbx                         # Move to start of bottom row in mineArray
     subq %rax, %rbx
 
-bottomLoop:
+bottomLoop:    
     call chooseBackground
-    
+
+    incq %rbx                               # Move to flags of cell
+    movzb (%rbx), %rax                      # Load flags of cell
+    decq %rbx                               # Move back to cell
+
+    andb $1, %al                       
+    cmpb $1, %al                            # Check if cell has cursor
+    jne notCursorBottom
+
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellCorner(%rip), %rsi              # Address of bottom corner
+    lea yellowText(%rip), %rsi               # Address of white text
+    mov $25, %rdx                           # Length of message
+    syscall
+
+    jmp printBottom
+
+    notCursorBottom:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellCorner(%rip), %rsi              # Address of bottom border
     mov $1, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellTop(%rip), %rsi                 # Address of bottom border
+    lea reset(%rip), %rsi                   # Address of top border
+    mov $4, %rdx                            # Length of message
+    syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi               # Address of white text
+    mov $24, %rdx                           # Length of message
+    syscall
+
+    call chooseBackground
+
+    jmp printBottomHalf
+
+    printBottom:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellCorner(%rip), %rsi              # Address of bottom border
+    mov $1, %rdx                            # Length of message
+    syscall
+
+    printBottomHalf:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellTop(%rip), %rsi                 # Address of top border
     mov $3, %rdx                            # Length of message
     syscall
 
@@ -192,9 +273,10 @@ bottomLoop:
     je bottomEnd
 
     addq $2, %rbx                           # Move to next cell in mineArray
-    jmp bottomLoop
+    
+jmp bottomLoop
 
-    bottomEnd:
+bottomEnd:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
     lea cellCorner(%rip), %rsi              # Address of bottom corner
@@ -203,7 +285,7 @@ bottomLoop:
 
     call newLine
 
-    subq $8, %rsp                           # Remove stage counter from stack
+    popq %rbx                               # Restore registers
     popq %rbx                               # Restore registers
 
     #epilogue
@@ -213,14 +295,27 @@ bottomLoop:
 ret
 
 rowIteratorTemp:
+    #prologue
+    pushq %rbp
+    movq %rsp, %rbp
+
     leaq width(%rip), %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
 
     subq %rax, %rbx                         # Move to start of row in mineArray
     subq %rax, %rbx
+
+    #epilogue
+    movq %rbp, %rsp
+    popq %rbp
+
 jmp rowIterator
 
 chooseBackground:
+    #prologue
+    pushq %rbp
+    movq %rsp, %rbp
+
     incq %rbx
     movb (%rbx), %al                        # Store current cell flags in temp storage
     decq %rbx
@@ -235,6 +330,10 @@ chooseBackground:
     mov $19, %rdx                           # Length of message
     syscall
 
+    #epilogue
+    movq %rbp, %rsp
+    popq %rbp
+
 ret
 
 opened:
@@ -244,9 +343,17 @@ opened:
     mov $19, %rdx                           # Length of message
     syscall
 
+    #epilogue
+    movq %rbp, %rsp
+    popq %rbp
+
 ret
 
 newLine:
+    #prologue
+    pushq %rbp
+    movq %rsp, %rbp
+
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
     lea newline(%rip), %rsi                 # Address of newline
@@ -258,5 +365,110 @@ newLine:
     lea reset(%rip), %rsi                   # Address of top border
     mov $4, %rdx                            # Length of message
     syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi               # Address of white text
+    mov $24, %rdx                           # Length of message
+    syscall
+
+    #epilogue
+    movq %rbp, %rsp
+    popq %rbp
+
+ret
+
+cursorTopLogic:
+    #prologue
+    pushq %rbp
+    movq %rsp, %rbp
+
+    call chooseBackground
+
+    incq %rbx                               # Move to flags of cell
+    movzb (%rbx), %rax                      # Load flags of cell
+    decq %rbx                               # Move back to cell
+
+    andb $1, %al                       
+    cmpb $1, %al                            # Check if cell has cursor
+    jne notCursor
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea yellowText(%rip), %rsi               # Address of white text
+    mov $25, %rdx                           # Length of message
+    syscall
+
+    jmp printTop
+
+    notCursor:
+    leaq width(%rip), %rax                  # Load width address in rax
+    movzb (%rax), %rax                      # Store width in rax
+
+    movq %rbx, %rcx                         # Store top cell address in rcx
+
+    subq %rax, %rcx                         # Check if cell is in top row
+    subq %rax, %rcx
+
+    leaq mineArray(%rip), %rdx              # Load mineArray address in rdx
+    cmpq %rdx, %rcx              # Compare cell with first cell in mineArray
+    
+    jl printTopWhite
+
+    incq %rcx                               # Move to top cell flags
+    movzb (%rcx), %rcx                      # Load top cell flags    
+
+    andb $1, %cl                            # Check if top cell has cursor
+    cmpb $1, %cl                            
+    je printTopYellow
+
+    printTopWhite:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellCorner(%rip), %rsi              # Address of bottom border
+    mov $1, %rdx                            # Length of message
+    syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea reset(%rip), %rsi                   # Address of top border
+    mov $4, %rdx                            # Length of message
+    syscall
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi               # Address of white text
+    mov $24, %rdx                           # Length of message
+    syscall
+
+    call chooseBackground
+
+    jmp printTopHalf
+
+    printTopYellow:
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea yellowText(%rip), %rsi               # Address of white text
+    mov $25, %rdx                           # Length of message
+    syscall
+
+    printTop:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellCorner(%rip), %rsi              # Address of bottom border
+    mov $1, %rdx                            # Length of message
+    syscall
+
+    printTopHalf:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellTop(%rip), %rsi                 # Address of top border
+    mov $3, %rdx                            # Length of message
+    syscall
+
+    #epilogue
+    movq %rbp, %rsp
+    popq %rbp
 
 ret
