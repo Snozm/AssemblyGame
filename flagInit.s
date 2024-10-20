@@ -241,7 +241,7 @@ done:
         jg loop
 
         decq %rcx
-        orb $6, (%rdx)
+        orb $2, (%rdx)
         decq %rdx
         movb $'#, (%rdx)
 

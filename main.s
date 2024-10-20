@@ -73,9 +73,23 @@ not_arrow:
     cmpb $'d, buffer(%rip)
     jne flag
 
-    cmpq $0, (%rsp)                         # Check if dig hasn't happened 
-    jne detect
+    leaq mineArray(%rip), %rdi              
+    addq %rbx, %rdi
+    addq %rbx, %rdi
+    incq %rdi
 
+    movq $8 ,%rax
+    andb (%rdi), %al                      # Load current cell flags
+    cmpq $8, %rax
+    je detect
+
+    cmpq $0, (%rsp)                         # Check if dig hasn't happened 
+    je initialiseMines
+
+    orb $4, (%rdi)                          # Set opened flag to 1
+    jmp detect
+
+    initialiseMines:
     call mineInit                           # Initialize mines around cursor
     notq (%rsp)                             # Set dig happened to 1
 
