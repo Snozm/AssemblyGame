@@ -89,9 +89,9 @@ not_arrow:
 
     orb $4, (%rdi)                          # Set opened flag to 1
     
-    movq $0, %rax
-    movq $testS, %rdi                       # LEGACY PRINTF, DO NOT TOUCH
-    call printf
+    #movq $0, %rax
+    #movq $testS, %rdi                       # LEGACY COMMENT, DO NOT TOUCH
+    #call printf
 
     jmp detect
 

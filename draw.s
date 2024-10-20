@@ -15,8 +15,20 @@ whiteText:
     .ascii "\033[38;2;255;255;255m\033[25m"
 yellowText:
     .ascii "\033[38;2;255;255;0m\033[1m\033[5m"
+blueText:
+    .ascii "\033[38;2;0;0;255m\033[25m"
+greenText:
+    .ascii "\033[38;2;0;255;0m\033[25m"
 redText:
     .ascii "\033[38;2;255;0;0m\033[25m"
+purpleText:
+    .ascii "\033[38;2;255;0;255m\033[25m"
+pinkText:
+    .ascii "\033[38;2;255;130;130m\033[25m"
+cyanText:
+    .ascii "\033[38;2;0;255;255m\033[25m"
+brownText:
+    .ascii "\033[38;2;150;55;20m\033[25m"
 lightGrayBackground:
     .ascii "\033[48;2;170;170;170m"
 darkGrayBackground:
@@ -173,7 +185,122 @@ rowIterator:
     lea cellPadding(%rip), %rsi             # Address of empty space
     mov $1, %rdx                            # Length of message
     syscall
+    
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'0, %rax                          # Check if cell is empty
+    jne check1
 
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellPadding(%rip), %rsi             # Address of empty space
+    mov $1, %rdx                            # Length of message
+    syscall
+
+    jmp finishCell
+
+    check1:
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'1, %rax                        # Check if cell has 1 mine
+    jne check2
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea blueText(%rip), %rsi            # Address of blue text
+    mov $20, %rdx                       # Length of message
+    syscall
+
+    jmp finishNumber
+
+    check2:
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'2, %rax                        # Check if cell has 2 mines
+    jne check3
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea greenText(%rip), %rsi           # Address of green text
+    mov $20, %rdx                       # Length of message
+    syscall
+
+    jmp finishNumber
+
+    check3:
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'3, %rax                        # Check if cell has 3 mines
+    jne check4
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea redText(%rip), %rsi             # Address of red text
+    mov $20, %rdx                       # Length of message
+    syscall
+
+    jmp finishNumber
+
+    check4:
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'4, %rax                        # Check if cell has 4 mines
+    jne check5
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea purpleText(%rip), %rsi          # Address of purple text
+    mov $22, %rdx                       # Length of message
+    syscall
+
+    jmp finishNumber
+
+    check5:
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'5, %rax                        # Check if cell has 5 mines
+    jne check6
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea pinkText(%rip), %rsi            # Address of pink text
+    mov $24, %rdx                       # Length of message
+    syscall
+
+    jmp finishNumber
+
+    check6:
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'6, %rax                        # Check if cell has 6 mines
+    jne check7
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea cyanText(%rip), %rsi          # Address of cyan text
+    mov $22, %rdx                       # Length of message
+    syscall
+
+    jmp finishNumber
+
+    check7:
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'7, %rax                        # Check if cell has 7 mines
+    jne check8
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi           # Address of white text
+    mov $24, %rdx                       # Length of message
+    syscall
+
+    jmp finishNumber
+
+    check8:
+    movzb (%rbx), %rax                      # Load cell value
+    cmpq $'8, %rax                        # Check if cell has 8 mines
+    jne finishNumber
+
+    mov $1, %rax                        # Syscall number for write
+    mov $1, %rdi                        # File descriptor 1 (stdout)
+    lea brownText(%rip), %rsi           # Address of brown text
+    mov $22, %rdx                       # Length of message
+    syscall
+
+    finishNumber:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
     mov %rbx, %rsi                          # Address of character
