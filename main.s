@@ -72,16 +72,10 @@ not_arrow:
     # Handle non-arrow keys
     cmpb $'d, buffer(%rip)
     jne flag
-    
-    call clear
 
-    mov $1, %rax                            # Syscall number for write
-    mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea d_message(%rip), %rsi               # Address of message
-    mov $8, %rdx                            # Length of message
-    syscall
+    call mineInit
 
-    jmp done
+    jmp detect
 flag:
     cmpb $'f, buffer(%rip)
     jne detect

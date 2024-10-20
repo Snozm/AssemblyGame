@@ -83,7 +83,7 @@ done:
     
     cmpq %rax, %r8                          # Check if mine count is within board size
     jg invalidMineInput
-    movw %ax, mines(%rip)                   # Store mine count
+    movw %r8w, mines(%rip)                   # Store mine count
 
     #epilogue
     movq %rbp, %rsp
