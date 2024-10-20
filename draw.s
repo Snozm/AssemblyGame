@@ -27,110 +27,98 @@ draw:
 
     call clear
 
-    pushq %r15                              # Save registers
-    pushq %r14
-    pushq %r13
-    pushq %r12
-    pushq %rbx
+    pushq %rbx                              # Save registers
     pushq $0                                # Push 0 for stage counter
 
     leaq mineArray(%rip), %rbx              # Load address of mineArray in rbx
-    movq $0, %r15                           # Initialize column counter
-    movq $0, %r14                           # Initialize row counter
 
-    leaq height(%rip), %r13                 # Load height address in r13
-    movzb (%r13), %r13                      # Store height in r13
+rowIterator:
+    cmpq $0, (%rsp)                         # Check if stage counter is 0
+    jne middlePart
 
-    leaq width(%rip), %r12                  # Load width address in r12
-    movzb (%r12), %r12                      # Store width in r12
+    call chooseBackground
 
-columnIterator:
-    incq %r15                               # Increment column counter
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi               # Address of white text
+    mov $19, %rdx                           # Length of message
+    syscall
+    
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellCorner(%rip), %rsi              # Address of bottom border
+    mov $1, %rdx                            # Length of message
+    syscall
 
-    rowIterator:
-        cmpq $0, (%rsp)                     # Check if stage counter is 0
-        jne middlePart
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellTop(%rip), %rsi                 # Address of top border
+    mov $3, %rdx                            # Length of message
+    syscall
 
-        call chooseBackground
+    jmp rowCheck                            # Check if row is complete
 
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea whiteText(%rip), %rsi           # Address of white text
-        mov $19, %rdx                       # Length of message
-        syscall
-        
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea cellCorner(%rip), %rsi          # Address of bottom border
-        mov $1, %rdx                        # Length of message
-        syscall
+    middlePart:
+    call chooseBackground
 
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea cellTop(%rip), %rsi             # Address of top border
-        mov $3, %rdx                        # Length of message
-        syscall
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea whiteText(%rip), %rsi               # Address of white text
+    mov $19, %rdx                           # Length of message
+    syscall
 
-        jmp rowCheck                        # Check if row is complete
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellWall(%rip), %rsi                # Address of cell wall
+    mov $1, %rdx                            # Length of message
+    syscall
+    
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellPadding(%rip), %rsi             # Address of empty space
+    mov $1, %rdx                            # Length of message
+    syscall
 
-        middlePart:
-        call chooseBackground
+    incq %rbx                               # Move to flags of cell
+    movq (%rbx), %rax                       # Load flags of cell
+    decq %rbx                               # Move back to cell
 
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea whiteText(%rip), %rsi           # Address of white text
-        mov $19, %rdx                       # Length of message
-        syscall
+    andq $4, %rax                       
+    cmpq $4, %rax                           # Check if cell is opened
+    je openedCell
 
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea cellWall(%rip), %rsi            # Address of cell wall
-        mov $1, %rdx                        # Length of message
-        syscall
-        
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea cellPadding(%rip), %rsi         # Address of empty space
-        mov $1, %rdx                        # Length of message
-        syscall
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellPadding(%rip), %rsi             # Address of padding
+    mov $1, %rdx                            # Length of message
+    syscall
 
-        incq %rbx                           # Move to flags of cell
-        movq (%rbx), %rax                   # Load flags of cell
-        decq %rbx                           # Move back to cell
+    jmp finishCell
 
-        andq $4, %rax                       
-        cmpq $4, %rax                       # Check if cell is opened
-        je openedCell
+    openedCell:
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    mov %rbx, %rsi                          # Address of character
+    mov $1, %rdx                            # Length of message
+    syscall
 
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea cellPadding(%rip), %rsi         # Address of padding
-        mov $1, %rdx                        # Length of message
-        syscall
+    finishCell:
 
-        jmp finishCell
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea cellPadding(%rip), %rsi             # Address of empty space
+    mov $1, %rdx                            # Length of message
+    syscall
 
-        openedCell:
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        mov %rbx, %rsi                      # Address of character
-        mov $1, %rdx                        # Length of message
-        syscall
+    rowCheck:
+    incq %rbx                               # Move to cell flags
+    movb $32, %al                           # Initialize right border checker
+    andb (%rbx), %al                        # Check if right border is set
+    decq %rbx                               # Move back to cell
+    cmpb $32, %al                           # Compare right border flag with 1
+    je rowEnd
 
-        finishCell:
-
-        mov $1, %rax                        # Syscall number for write
-        mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea cellPadding(%rip), %rsi         # Address of empty space
-        mov $1, %rdx                        # Length of message
-        syscall
-
-        rowCheck:
-        incq %r14                           # Increment row counter
-        cmpq %r12, %r14                     # Compare row counter with width
-        je rowEnd
-
-        addq $2, %rbx                       # Move to next cell in mineArray
+    addq $2, %rbx                           # Move to next cell in mineArray
 
     jmp rowIterator 
 
@@ -164,19 +152,24 @@ columnIterator:
     finishRow:
     addq $2, %rbx                           # Move to next cell in mineArray
 
-    movq $0, %r14                           # Reset row counter
-
     call newLine
 
     notq (%rsp)                             # Change stage counter   
     cmpq $0, (%rsp)                         # Check if stage counter was not 0 
     jne rowIteratorTemp
 
-    cmpq %r13, %r15                         # Compare column counter with height
-jne columnIterator
+    incq %rbx                           # Move to cell flags
+    movb $16, %al                       # Initialize bottom border checker
+    andb (%rbx), %al                     # Check if bottom border is set
+    decq %rbx                           # Move back to cell
+    cmpb $16, %al                       # Compare bottom border flag with 1
 
-    subq %r12, %rbx                         # Move to start of bottom row in mineArray
-    subq %r12, %rbx
+jne rowIterator
+
+    leaq width(%rip), %rax                  # Load width address in rax
+    movzb (%rax), %rax                      # Store width in rax
+    subq %rax, %rbx                         # Move to start of bottom row in mineArray
+    subq %rax, %rbx
 
 bottomLoop:
     call chooseBackground
@@ -193,8 +186,11 @@ bottomLoop:
     mov $3, %rdx                            # Length of message
     syscall
 
-    incq %r14                               # Increment row counter
-    cmpq %r12, %r14                         # Compare row counter with width
+    incq %rbx                               # Move to cell flags
+    movb $32, %al                           # Initialize right border checker
+    andb (%rbx), %al                        # Check if right border is set
+    decq %rbx                               # Move back to cell
+    cmpb $32, %al                           # Compare right border flag with 1
     je bottomEnd
 
     addq $2, %rbx                           # Move to next cell in mineArray
@@ -211,10 +207,6 @@ bottomLoop:
 
     subq $8, %rsp                           # Remove stage counter from stack
     popq %rbx                               # Restore registers
-    popq %r12
-    popq %r13
-    popq %r14
-    popq %r15
 
     #epilogue
     movq %rbp, %rsp
@@ -223,8 +215,10 @@ bottomLoop:
 ret
 
 rowIteratorTemp:
-    subq %r12, %rbx                         # Move to start of row in mineArray
-    subq %r12, %rbx
+    leaq width(%rip), %rax                  # Load width address in rax
+    movzb (%rax), %rax                      # Store width in rax
+    subq %rax, %rbx                         # Move to start of row in mineArray
+    subq %rax, %rbx
 jmp rowIterator
 
 chooseBackground:

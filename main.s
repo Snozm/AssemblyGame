@@ -32,6 +32,12 @@ main:
 
 # Initialize border flags
     leaq mineArray(%rip), %rdi              # Load address of mineArray in rdi
+
+    # Initialize cursor flag
+    incq %rdi                               # Move to first cell flags in mineArray
+    orb $1, (%rdi)                          # Set cursor flag the cell to 1
+    decq %rdi                               # Move back to first cell in mineArray
+    
     movq $0, %r8                            # Initialize column counter
     movq $0, %r9                            # Initialize row counter
 
