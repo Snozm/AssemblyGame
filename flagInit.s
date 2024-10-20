@@ -89,16 +89,14 @@ mineInit:
 
 
     leaq width(%rip), %rdi
-    movzb (%rdi), %rdi #load width value into rdi
+    movzb (%rdi), %rdi                      # Store width value into rdi
 
     leaq height(%rip), %rsi
-    movzb (%rsi), %rsi #load height value into rsi
+    movzb (%rsi), %rsi                      # Store height value into rsi
 
     movq %rdi, %rax
-    mulq %rsi
-    movq $2, %r10
-    mulq %r10
-    movq %rax, %rcx # cell count in rcx
+    mulq %rsi                               # Store cell count in rcx
+    movq %rax, %rcx 
 
     movq %rbx, %r9 # cursor r9
     
@@ -141,7 +139,7 @@ mineInit:
     addq $2, %r8
     orb $4, (%r8) #open cell left and above cursor
 
-    checkBottom:
+checkBottom:
     incq %rdi
 
     movq %rbx, %r9 # cursor r9
@@ -173,18 +171,18 @@ mineInit:
 
     checkDownRight:
 
-    movq %r9, %rax
-    movq $0, %rdx
-    divq %rdi
-    decq %rdi
-    cmpq %rdi, %rdx
-    je checkLeft
+        movq %r9, %rax
+        movq $0, %rdx
+        divq %rdi
+        decq %rdi
+        cmpq %rdi, %rdx
+        je checkLeft
 
-    addq $2, %r8
-    orb $4, (%r8) #open cell left and below cursor
+        addq $2, %r8
+        orb $4, (%r8) #open cell left and below cursor
 
 
-    checkLeft:
+checkLeft:
     incq %rdi
 
     movq %rbx, %r9 # cursor r9
@@ -204,7 +202,7 @@ mineInit:
     orb $4, (%r8) #open cell left and below cursor
     addq $2, %r8
 
-    checkRight:
+checkRight:
 
     movq %r9, %rax
     movq $0, %rdx
