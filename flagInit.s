@@ -88,88 +88,88 @@ mineInit:
 #divisor is in r12
 
 
-    leaq width(%rip), %rdi
-    movzb (%rdi), %rdi                      # Store width value into rdi
+            leaq width(%rip), %rdi
+            movzb (%rdi), %rdi                      # Store width value into rdi
 
-    leaq height(%rip), %rsi
-    movzb (%rsi), %rsi                      # Store height value into rsi
+            leaq height(%rip), %rsi
+            movzb (%rsi), %rsi                      # Store height value into rsi
 
-    movq %rdi, %rax
-    mulq %rsi                               # Store cell count in rcx
-    movq %rax, %rcx 
+            movq %rdi, %rax
+            mulq %rsi                               # Store cell count in rcx
+            movq %rax, %rcx 
 
-    movq %rbx, %r9 # cursor r9
-    
-    leaq mineArray(%rip), %r8
-    addq %rbx, %r8
-    addq %rbx, %r8
-    incq %r8
-    orb $4, (%r8) #open cursor cell
+            movq %rbx, %r9 # cursor r9
+            
+            leaq mineArray(%rip), %r8
+            addq %rbx, %r8
+            addq %rbx, %r8
+            incq %r8
+            orb $4, (%r8) #open cursor cell
 
-    subq %rdi, %r8
-    subq %rdi, %r8
-    subq %rdi, %r9
-    decq %rdi
-    leaq mineArray(%rip), %r10
-    cmpq %r10, %r8
-    jl checkBottom
+            subq %rdi, %r8
+            subq %rdi, %r8
+            subq %rdi, %r9
+            decq %rdi
+            leaq mineArray(%rip), %r10
+            cmpq %r10, %r8
+            jl checkBottom
 
-    incq %rdi
-    orb $4, (%r8) #open cell above cursor
+            incq %rdi
+            orb $4, (%r8) #open cell above cursor
 
-    movq %r9, %rax
-    movq $0, %rdx
-    divq %rdi
-    cmpq $0, %rdx
-    je checkUpRight
+            movq %r9, %rax
+            movq $0, %rdx
+            divq %rdi
+            cmpq $0, %rdx
+            je checkUpRight
 
-    subq $2, %r8
-    orb $4, (%r8) #open cell left and above cursor
-    addq $2, %r8
+            subq $2, %r8
+            orb $4, (%r8) #open cell left and above cursor
+            addq $2, %r8
 
-    checkUpRight:
+            checkUpRight:
 
-    movq %r9, %rax
-    movq $0, %rdx
-    divq %rdi
-    decq %rdi
-    cmpq %rdi, %rdx
-    je checkBottom
+            movq %r9, %rax
+            movq $0, %rdx
+            divq %rdi
+            decq %rdi
+            cmpq %rdi, %rdx
+            je checkBottom
 
-    addq $2, %r8
-    orb $4, (%r8) #open cell left and above cursor
+            addq $2, %r8
+            orb $4, (%r8) #open cell left and above cursor
 
 checkBottom:
     incq %rdi
 
-    movq %rbx, %r9 # cursor r9
-    
-    leaq mineArray(%rip), %r8
-    addq %rbx, %r8
-    addq %rbx, %r8
-    incq %r8
+            movq %rbx, %r9 # cursor r9
+            
+            leaq mineArray(%rip), %r8
+            addq %rbx, %r8
+            addq %rbx, %r8
+            incq %r8
 
-    addq %rdi, %r8
-    addq %rdi, %r8
-    addq %rdi, %r9
-    decq %rdi
-    cmpq %rcx, %r9
-    jge checkLeft
+            addq %rdi, %r8
+            addq %rdi, %r8
+            addq %rdi, %r9
+            decq %rdi
+            cmpq %rcx, %r9
+            jge checkLeft
 
-    incq %rdi
-    orb $4, (%r8) #open cell below cursor
+            incq %rdi
+            orb $4, (%r8) #open cell below cursor
 
-    movq %r9, %rax
-    movq $0, %rdx
-    divq %rdi
-    cmpq $0, %rdx
-    je checkDownRight
+            movq %r9, %rax
+            movq $0, %rdx
+            divq %rdi
+            cmpq $0, %rdx
+            je checkDownRight
 
-    subq $2, %r8
-    orb $4, (%r8) #open cell left and below cursor
-    addq $2, %r8
+            subq $2, %r8
+            orb $4, (%r8) #open cell left and below cursor
+            addq $2, %r8
 
-    checkDownRight:
+            checkDownRight:
 
         movq %r9, %rax
         movq $0, %rdx
@@ -185,36 +185,36 @@ checkBottom:
 checkLeft:
     incq %rdi
 
-    movq %rbx, %r9 # cursor r9
-    
-    leaq mineArray(%rip), %r8
-    addq %rbx, %r8
-    addq %rbx, %r8
-    incq %r8
+            movq %rbx, %r9 # cursor r9
+            
+            leaq mineArray(%rip), %r8
+            addq %rbx, %r8
+            addq %rbx, %r8
+            incq %r8
 
-    movq %r9, %rax
-    movq $0, %rdx
-    divq %rdi
-    cmpq $0, %rdx
-    je checkRight
+            movq %r9, %rax
+            movq $0, %rdx
+            divq %rdi
+            cmpq $0, %rdx
+            je checkRight
 
-    subq $2, %r8
-    orb $4, (%r8) #open cell left and below cursor
-    addq $2, %r8
+            subq $2, %r8
+            orb $4, (%r8) #open cell left and below cursor
+            addq $2, %r8
 
 checkRight:
 
-    movq %r9, %rax
-    movq $0, %rdx
-    divq %rdi
-    decq %rdi
-    cmpq %rdi, %rdx
-    je done
+            movq %r9, %rax
+            movq $0, %rdx
+            divq %rdi
+            decq %rdi
+            cmpq %rdi, %rdx
+            je done
 
-    addq $2, %r8
-    orb $4, (%r8) #open cell left and below cursor
+            addq $2, %r8
+            orb $4, (%r8) #open cell left and below cursor
 
-done:
+        done:
 
 
     leaq mines(%rip), %rcx
