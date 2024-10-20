@@ -23,12 +23,13 @@ main:
 
     call borderInit
 
-    
+
 
     call enterRaw
 
-    pushq $0                                # Stack alignment
+    
     pushq %rbx                              # Save cursor index register
+    pushq $0                                # Stack alignment
 
     movq $0, %rbx                           # Initialize cursor index to 1
 
@@ -203,6 +204,7 @@ done:
 
     call enterCooked                        # Restore terminal
 
+    popq %rbx                              # Restore cursor index register
     popq %rbx                              # Restore cursor index register
 
     #epilogue
