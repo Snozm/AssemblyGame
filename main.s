@@ -5,18 +5,9 @@ mineArray:
     .skip 3200   # Reserve space for 40x40 mine array
 
 .text
-up_message:
-    .ascii "Up arrow pressed\n"
-down_message:
-    .ascii "Down arrow pressed\n"
-right_message:
-    .ascii "Right arrow pressed\n"
-left_message:
-    .ascii "Left arrow pressed\n"
+
 d_message:
     .ascii "Found D\n"
-f_message:
-    .ascii "Found F\n"
 
 
 .global main

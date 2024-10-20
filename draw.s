@@ -99,7 +99,7 @@ rowIterator:
     decq %rbx                               # Move back to cell
 
     andb $8, %al                       
-    cmpb $8, %al                            # Check if cell is opened
+    cmpb $8, %al                            # Check if cell is flagged
     je flaggedCell
 
     mov $1, %rax                            # Syscall number for write
@@ -368,19 +368,11 @@ bottomEnd:
 ret
 
 rowIteratorTemp:
-    #prologue
-    pushq %rbp
-    movq %rsp, %rbp
-
     leaq width(%rip), %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
 
     subq %rax, %rbx                         # Move to start of row in mineArray
     subq %rax, %rbx
-
-    #epilogue
-    movq %rbp, %rsp
-    popq %rbp
 
 jmp rowIterator
 
