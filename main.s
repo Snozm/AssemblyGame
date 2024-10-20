@@ -173,7 +173,7 @@ up_arrow:
         addq %rcx, %rbx                     # Move to lower cell
 
         cmpq $0, %rdx                       # Check if height counter is 0
-        jne upLoop
+    jne upLoop
 
 jmp arrowDone
 
