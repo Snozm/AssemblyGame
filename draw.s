@@ -33,10 +33,10 @@ draw:
     leaq mineArray(%rip), %rbx              # Load address of mineArray in rbx
 
 rowIterator:
+    call chooseBackground
+
     cmpq $0, (%rsp)                         # Check if stage counter is 0
     jne middlePart
-
-    call chooseBackground
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
@@ -59,8 +59,6 @@ rowIterator:
     jmp rowCheck                            # Check if row is complete
 
     middlePart:
-    call chooseBackground
-
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
     lea whiteText(%rip), %rsi               # Address of white text
@@ -80,11 +78,11 @@ rowIterator:
     syscall
 
     incq %rbx                               # Move to flags of cell
-    movq (%rbx), %rax                       # Load flags of cell
+    movb (%rbx), %al                        # Load flags of cell
     decq %rbx                               # Move back to cell
 
-    andq $4, %rax                       
-    cmpq $4, %rax                           # Check if cell is opened
+    andb $4, %al                       
+    cmpb $4, %al                            # Check if cell is opened
     je openedCell
 
     mov $1, %rax                            # Syscall number for write
@@ -158,16 +156,16 @@ rowIterator:
     cmpq $0, (%rsp)                         # Check if stage counter was not 0 
     jne rowIteratorTemp
 
-    incq %rbx                           # Move to cell flags
-    movb $16, %al                       # Initialize bottom border checker
-    andb (%rbx), %al                     # Check if bottom border is set
-    decq %rbx                           # Move back to cell
-    cmpb $16, %al                       # Compare bottom border flag with 1
-
+    decq %rbx                               # Move to previous cell flags
+    movb $16, %al                           # Initialize bottom border checker
+    andb (%rbx), %al                        # Check if bottom border is 1
+    incq %rbx                               # Move back to cell
+    cmpb $16, %al                           # Compare bottom border flag with 1
 jne rowIterator
 
     leaq width(%rip), %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
+
     subq %rax, %rbx                         # Move to start of bottom row in mineArray
     subq %rax, %rbx
 
@@ -217,6 +215,7 @@ ret
 rowIteratorTemp:
     leaq width(%rip), %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
+
     subq %rax, %rbx                         # Move to start of row in mineArray
     subq %rax, %rbx
 jmp rowIterator
@@ -225,6 +224,7 @@ chooseBackground:
     incq %rbx
     movb (%rbx), %al                        # Store current cell flags in temp storage
     decq %rbx
+    
     andb $4, %al                            # Isolate opened flag
     cmpb $4, %al                            # Check if cell is opened
     je opened

@@ -34,9 +34,9 @@ main:
     leaq mineArray(%rip), %rdi              # Load address of mineArray in rdi
 
     # Initialize cursor flag
-    incq %rdi                               # Move to first cell flags in mineArray
-    orb $1, (%rdi)                          # Set cursor flag the cell to 1
-    decq %rdi                               # Move back to first cell in mineArray
+        incq %rdi                           # Move to first cell flags in mineArray
+        orb $1, (%rdi)                      # Set cursor flag the cell to 1
+        decq %rdi                           # Move back to first cell in mineArray
     
     movq $0, %r8                            # Initialize column counter
     movq $0, %r9                            # Initialize row counter
@@ -70,6 +70,7 @@ columnIterator:
     incq %rdi
     orb $32, (%rdi)                         # Set right border flag the cell to 1
     decq %rdi
+    
     addq $2, %rdi                           # Move to next cell in mineArray
 
     movq $0, %r9                            # Reset row counter
