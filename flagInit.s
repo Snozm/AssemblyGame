@@ -32,7 +32,7 @@ columnIterator:
     incq %r8                                # Increment column counter
 
     rowIterator:
-        #movb $32, (%rdi)                    # Set cell character to space
+        movb $32, (%rdi)                    # Set cell character to space
         cmpq %rcx, %r8                      # Compare column counter with height
         jne notBottom
         incq %rdi
@@ -87,6 +87,138 @@ mineInit:
     movq %rax, %r12 # divisor number to r12
 #divisor is in r12
 
+
+    leaq width(%rip), %rdi
+    movzb (%rdi), %rdi #load width value into rdi
+
+    leaq height(%rip), %rsi
+    movzb (%rsi), %rsi #load height value into rsi
+
+    movq %rdi, %rax
+    mulq %rsi
+    movq $2, %r10
+    mulq %r10
+    movq %rax, %rcx # cell count in rcx
+
+    movq %rbx, %r9 # cursor r9
+    
+    leaq mineArray(%rip), %r8
+    addq %rbx, %r8
+    addq %rbx, %r8
+    incq %r8
+    orb $4, (%r8) #open cursor cell
+
+    subq %rdi, %r8
+    subq %rdi, %r8
+    subq %rdi, %r9
+    decq %rdi
+    leaq mineArray(%rip), %r10
+    cmpq %r10, %r8
+    jl checkBottom
+
+    incq %rdi
+    orb $4, (%r8) #open cell above cursor
+
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi
+    cmpq $0, %rdx
+    je checkUpRight
+
+    subq $2, %r8
+    orb $4, (%r8) #open cell left and above cursor
+    addq $2, %r8
+
+    checkUpRight:
+
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi
+    decq %rdi
+    cmpq %rdi, %rdx
+    je checkBottom
+
+    addq $2, %r8
+    orb $4, (%r8) #open cell left and above cursor
+
+    checkBottom:
+    incq %rdi
+
+    movq %rbx, %r9 # cursor r9
+    
+    leaq mineArray(%rip), %r8
+    addq %rbx, %r8
+    addq %rbx, %r8
+    incq %r8
+
+    addq %rdi, %r8
+    addq %rdi, %r8
+    addq %rdi, %r9
+    decq %rdi
+    cmpq %rcx, %r9
+    jge checkLeft
+
+    incq %rdi
+    orb $4, (%r8) #open cell below cursor
+
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi
+    cmpq $0, %rdx
+    je checkDownRight
+
+    subq $2, %r8
+    orb $4, (%r8) #open cell left and below cursor
+    addq $2, %r8
+
+    checkDownRight:
+
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi
+    decq %rdi
+    cmpq %rdi, %rdx
+    je checkLeft
+
+    addq $2, %r8
+    orb $4, (%r8) #open cell left and below cursor
+
+
+    checkLeft:
+    incq %rdi
+
+    movq %rbx, %r9 # cursor r9
+    
+    leaq mineArray(%rip), %r8
+    addq %rbx, %r8
+    addq %rbx, %r8
+    incq %r8
+
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi
+    cmpq $0, %rdx
+    je checkRight
+
+    subq $2, %r8
+    orb $4, (%r8) #open cell left and below cursor
+    addq $2, %r8
+
+    checkRight:
+
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi
+    decq %rdi
+    cmpq %rdi, %rdx
+    je done
+
+    addq $2, %r8
+    orb $4, (%r8) #open cell left and below cursor
+
+done:
+
+
     leaq mines(%rip), %rcx
     movzw (%rcx), %rcx
 
@@ -105,10 +237,10 @@ mineInit:
         #the random cell pointed to by %rdx
 
         incq %rdx
-        movb $2, %al
+        movb $6, %al
         andb (%rdx), %al
-        cmpb $2, %al
-        je loop
+        cmpb $0, %al
+        jg loop
 
         decq %rcx
         orb $6, (%rdx)
