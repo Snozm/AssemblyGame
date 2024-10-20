@@ -35,6 +35,8 @@ draw:
 
     call clear
 
+    call newLine
+
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
     lea whiteText(%rip), %rsi               # Address of white text
