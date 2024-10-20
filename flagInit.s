@@ -85,138 +85,138 @@ mineInit:
 
     divq %rcx # divide max 64 bit number by cell number
     movq %rax, %r12 # divisor number to r12
-#divisor is in r12
 
+BOUNDARY_TREE:
+    leaq width(%rip), %rdi
+    movzb (%rdi), %rdi                      # Store width value into rdi
 
-            leaq width(%rip), %rdi
-            movzb (%rdi), %rdi                      # Store width value into rdi
+    leaq height(%rip), %rsi
+    movzb (%rsi), %rsi                      # Store height value into rsi
 
-            leaq height(%rip), %rsi
-            movzb (%rsi), %rsi                      # Store height value into rsi
+    movq %rdi, %rax
+    mulq %rsi                               # Store cell count in rcx
+    movq %rax, %rcx 
 
-            movq %rdi, %rax
-            mulq %rsi                               # Store cell count in rcx
-            movq %rax, %rcx 
+    movq %rbx, %r9                          # Store cursor in r9
+    
+    leaq mineArray(%rip), %r8
+    addq %rbx, %r8
+    addq %rbx, %r8                          # Store cursor address in %r8
 
-            movq %rbx, %r9 # cursor r9
-            
-            leaq mineArray(%rip), %r8
-            addq %rbx, %r8
-            addq %rbx, %r8
-            incq %r8
-            orb $4, (%r8) #open cursor cell
+    incq %r8
+    orb $4, (%r8)                           # Open cursor cell
 
-            subq %rdi, %r8
-            subq %rdi, %r8
-            subq %rdi, %r9
-            decq %rdi
-            leaq mineArray(%rip), %r10
-            cmpq %r10, %r8
-            jl checkBottom
+    subq %rdi, %r8
+    subq %rdi, %r8                          # Move to top cell
+    subq %rdi, %r9
 
-            incq %rdi
-            orb $4, (%r8) #open cell above cursor
+    decq %rdi
+    leaq mineArray(%rip), %r10              # Check if top cell exists
+    cmpq %r10, %r8
+    jl checkBottom
 
-            movq %r9, %rax
-            movq $0, %rdx
-            divq %rdi
-            cmpq $0, %rdx
-            je checkUpRight
+    incq %rdi
+    orb $4, (%r8)                           # Open cell above cursor
 
-            subq $2, %r8
-            orb $4, (%r8) #open cell left and above cursor
-            addq $2, %r8
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi                               # Check if top cell is on left border
+    cmpq $0, %rdx
+    je checkUpRight
 
-            checkUpRight:
+    subq $2, %r8
+    orb $4, (%r8)                           # Open top left cell
+    addq $2, %r8
 
-            movq %r9, %rax
-            movq $0, %rdx
-            divq %rdi
-            decq %rdi
-            cmpq %rdi, %rdx
-            je checkBottom
+    checkUpRight:
 
-            addq $2, %r8
-            orb $4, (%r8) #open cell left and above cursor
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi                               # Check if top cell is on right border
+    decq %rdi
+    cmpq %rdi, %rdx
+    je checkBottom
+
+    addq $2, %r8
+    orb $4, (%r8)                           # Open top right cell
 
 checkBottom:
     incq %rdi
 
-            movq %rbx, %r9 # cursor r9
-            
-            leaq mineArray(%rip), %r8
-            addq %rbx, %r8
-            addq %rbx, %r8
-            incq %r8
+    movq %rbx, %r9                          # Store cursor in r9
+    
+    leaq mineArray(%rip), %r8
+    addq %rbx, %r8
+    addq %rbx, %r8                          # Store cursor address in %r8
+    incq %r8
 
-            addq %rdi, %r8
-            addq %rdi, %r8
-            addq %rdi, %r9
-            decq %rdi
-            cmpq %rcx, %r9
-            jge checkLeft
+    addq %rdi, %r8
+    addq %rdi, %r8                          # Move to bottom cell
+    addq %rdi, %r9
 
-            incq %rdi
-            orb $4, (%r8) #open cell below cursor
+    decq %rdi
+    cmpq %rcx, %r9                          # Check if bottom cell exists
+    jge checkLeft
 
-            movq %r9, %rax
-            movq $0, %rdx
-            divq %rdi
-            cmpq $0, %rdx
-            je checkDownRight
+    incq %rdi
+    orb $4, (%r8)                           # Open cell below cursor
 
-            subq $2, %r8
-            orb $4, (%r8) #open cell left and below cursor
-            addq $2, %r8
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi                               # Check if bottom cell is on left border
+    cmpq $0, %rdx
+    je checkDownRight
 
-            checkDownRight:
+    subq $2, %r8
+    orb $4, (%r8)                           # Open bottom left cell
+    addq $2, %r8
+
+    checkDownRight:
 
         movq %r9, %rax
         movq $0, %rdx
-        divq %rdi
+        divq %rdi                           # Check if bottom cell is on right border
         decq %rdi
         cmpq %rdi, %rdx
         je checkLeft
 
         addq $2, %r8
-        orb $4, (%r8) #open cell left and below cursor
+        orb $4, (%r8)                       # Open bottom right cell
 
 
 checkLeft:
     incq %rdi
+    movq %rbx, %r9                          # Store cursor in r9
+    
+    leaq mineArray(%rip), %r8
+    addq %rbx, %r8                          # Store cursor address in %r8
+    addq %rbx, %r8
+    incq %r8
 
-            movq %rbx, %r9 # cursor r9
-            
-            leaq mineArray(%rip), %r8
-            addq %rbx, %r8
-            addq %rbx, %r8
-            incq %r8
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi                               # Check if cell is on left border
+    cmpq $0, %rdx
+    je checkRight
 
-            movq %r9, %rax
-            movq $0, %rdx
-            divq %rdi
-            cmpq $0, %rdx
-            je checkRight
-
-            subq $2, %r8
-            orb $4, (%r8) #open cell left and below cursor
-            addq $2, %r8
+    subq $2, %r8
+    orb $4, (%r8)                           # Open cell left of cursor
+    addq $2, %r8
 
 checkRight:
 
-            movq %r9, %rax
-            movq $0, %rdx
-            divq %rdi
-            decq %rdi
-            cmpq %rdi, %rdx
-            je done
+    movq %r9, %rax
+    movq $0, %rdx
+    divq %rdi                               # Check if cell is on right border
+    decq %rdi
+    cmpq %rdi, %rdx
+    je done
 
-            addq $2, %r8
-            orb $4, (%r8) #open cell left and below cursor
+    addq $2, %r8
+    orb $4, (%r8)                           # Open cell right of cursor
+BOUNDARY_TREE_END:
 
-        done:
-
-
+done:
     leaq mines(%rip), %rcx
     movzw (%rcx), %rcx
 
