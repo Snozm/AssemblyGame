@@ -3,8 +3,8 @@ buffer:
     .skip 3       # Reserve space for 3 characters (escape sequence)
 mineArray:
     .skip 3200   # Reserve space for 40x40 mine array
-
 .text
+testS: .asciz "test"
 
 d_message:
     .ascii "Found D\n"
@@ -78,19 +78,28 @@ not_arrow:
     addq %rbx, %rdi
     incq %rdi
 
-    movq $8 ,%rax
+    movq $8, %rax
     andb (%rdi), %al                      # Load current cell flags
+    
     cmpq $8, %rax
     je detect
-
+    
     cmpq $0, (%rsp)                         # Check if dig hasn't happened 
     je initialiseMines
 
     orb $4, (%rdi)                          # Set opened flag to 1
+    
+    movq $0, %rax
+    movq $testS, %rdi                       # LEGACY PRINTF, DO NOT TOUCH
+    call printf
+
     jmp detect
 
     initialiseMines:
     call mineInit                           # Initialize mines around cursor
+
+    
+    call calcNumbers                        #calc the num
     notq (%rsp)                             # Set dig happened to 1
 
     jmp detect
