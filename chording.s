@@ -188,13 +188,16 @@ BOUNDARY_TREE_END:
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
 
+    movq %r11, %rdx
+    movq $0, %r11
+
     movzb (%r8), %rax
     subq $48, %rax
-    cmpq %r11, %rax
+
+    cmpq %rdx, %rax
     jne end
 
-
-
+OPEN_CELLS:
     leaq width(%rip), %rdi
     movzb (%rdi), %rdi                      # Store width value into rdi
 
@@ -229,7 +232,13 @@ BOUNDARY_TREE_END:
     andb (%r8), %al
     cmpq $8, %rax
     je openUpLeft
+
+    movq $4, %rax 
+    andb (%r8), %al
+    cmpq $4, %rax
+    je openUpLeft
     orb $4, (%r8)                           # Open cell above cursor
+    incq %r11
 
     openUpLeft:
     movq %r9, %rax
@@ -246,7 +255,15 @@ BOUNDARY_TREE_END:
     je openUpRight
 
     subq $2, %r8
+    movq $4, %rax 
+    andb (%r8), %al
+    addq $2, %r8
+    cmpq $4, %rax
+    je openUpRight
+
+    subq $2, %r8
     orb $4, (%r8)                           # Open top left cell
+    incq %r11
     addq $2, %r8
 
     openUpRight:
@@ -265,7 +282,13 @@ BOUNDARY_TREE_END:
     cmpq $8, %rax
     je openBottom
 
+    movq $4, %rax 
+    andb (%r8), %al
+    cmpq $4, %rax
+    je openBottom
+
     orb $4, (%r8)
+    incq %r11
 
 openBottom:
     incq %rdi
@@ -292,7 +315,13 @@ openBottom:
     cmpq $8, %rax
     je openDownLeft
 
+    movq $4, %rax 
+    andb (%r8), %al
+    cmpq $4, %rax
+    je openDownLeft
+
     orb $4, (%r8)                           # Open cell below cursor
+    incq %r11
 
     openDownLeft:
     movq %r9, %rax
@@ -307,9 +336,17 @@ openBottom:
     addq $2, %r8
     cmpq $8, %rax
     je openDownRight
+
+    subq $2, %r8
+    movq $4, %rax 
+    andb (%r8), %al
+    addq $2, %r8
+    cmpq $4, %rax
+    je openDownRight
     
     subq $2, %r8
     orb $4, (%r8)                           # Open top left cell
+    incq %r11
     addq $2, %r8
 
     openDownRight:
@@ -327,7 +364,13 @@ openBottom:
         cmpq $8, %rax
         je openLeft
 
+        movq $4, %rax 
+        andb (%r8), %al
+        cmpq $4, %rax
+        je openLeft
+
         orb $4, (%r8)
+        incq %r11
 
 
 openLeft:
@@ -351,9 +394,17 @@ openLeft:
     addq $2, %r8
     cmpq $8, %rax
     je openRight
+
+    subq $2, %r8
+    movq $4, %rax 
+    andb (%r8), %al
+    addq $2, %r8
+    cmpq $4, %rax
+    je openRight
     
     subq $2, %r8
     orb $4, (%r8)                           # Open top left cell
+    incq %r11
     addq $2, %r8
 
 openRight:
@@ -371,11 +422,19 @@ openRight:
     cmpq $8, %rax
     je end
 
+    movq $4, %rax 
+    andb (%r8), %al
+    cmpq $4, %rax
+    je end
+
     orb $4, (%r8)                           # Open cell right of cursor
+    incq %r11
 
-
+    
 
 end:
+    movq %r11, %rax
+
     #epilogue
     movq %rbp, %rsp
     popq %rbp

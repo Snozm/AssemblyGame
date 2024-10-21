@@ -90,21 +90,29 @@ not_arrow:
     je digChorder
 
     orb $4, (%rdi)                          # Set opened flag to 1
+
+    decq %rdi
+    cmpb $'0, (%rdi)
+    jne detect
+    call zeroChainer
     
-    #movq $0, %rax
-    #movq $testS, %rdi                       # LEGACY COMMENT, DO NOT TOUCH
-    #call printf
+    movq $0, %rax
+    movq $testS, %rdi                       # LEGACY COMMENT, DO NOT TOUCH
+    call printf
 
     jmp detect
 
     digChorder:
+
     call digChording
     jmp detect
 
     initialiseMines:
     call mineInit                           # Initialize mines around cursor
-
+    
     call calcNumbers                        #calc the num
+
+    call zeroChainer
     notq (%rsp)                             # Set dig happened to 1
 
     jmp detect
