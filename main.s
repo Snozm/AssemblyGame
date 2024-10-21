@@ -84,12 +84,21 @@ not_arrow:
     cmpq $0, (%rsp)                         # Check if dig hasn't happened 
     je initialiseMines
 
+    movq $4, %rax
+    andb (%rdi), %al                      # Load current cell flags
+    cmpq $4, %rax
+    je digChorder
+
     orb $4, (%rdi)                          # Set opened flag to 1
     
     #movq $0, %rax
     #movq $testS, %rdi                       # LEGACY COMMENT, DO NOT TOUCH
     #call printf
 
+    jmp detect
+
+    digChorder:
+    call digChording
     jmp detect
 
     initialiseMines:
