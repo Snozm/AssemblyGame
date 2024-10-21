@@ -19,6 +19,7 @@ BOUNDARY_TREE:
     leaq height(%rip), %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
+    movq $0, %rdx
     movq %rdi, %rax
     mulq %rsi                               # Store cell count in rcx
     movq %rax, %rcx 
@@ -34,6 +35,8 @@ BOUNDARY_TREE:
     subq %rdi, %r8
     subq %rdi, %r8                          # Move to top cell
     subq %rdi, %r9
+    
+    
 
     decq %rdi
     leaq mineArray(%rip), %r10              # Check if top cell exists
@@ -200,7 +203,7 @@ BOUNDARY_TREE_END:
     cmpq %rcx, %rbx
     jl BOUNDARY_TREE
 
-
 popq %rbx
 movq %rbp, %rsp
 popq %rbp
+ret

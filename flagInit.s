@@ -75,6 +75,7 @@ mineInit:
     leaq height(%rip), %rcx
     movzb (%rcx), %rcx #load height value into rax
 
+    movq $0, %rdx
     mulq %rcx #multiply to get total cell count
     movq %rax, %rcx #mov count into rcx
 
@@ -93,6 +94,7 @@ BOUNDARY_TREE:
     leaq height(%rip), %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
+    movq $0, %rdx
     movq %rdi, %rax
     mulq %rsi                               # Store cell count in rcx
     movq %rax, %rcx 

@@ -4,11 +4,8 @@ buffer:
 mineArray:
     .skip 3200   # Reserve space for 40x40 mine array
 .text
+
 testS: .asciz "test"
-
-d_message:
-    .ascii "Found D\n"
-
 
 .global main
 .global mineArray
@@ -89,16 +86,15 @@ not_arrow:
 
     orb $4, (%rdi)                          # Set opened flag to 1
     
-    movq $0, %rax
-    movq $testS, %rdi                       # LEGACY COMMENT, DO NOT TOUCH
-    call printf
+    #movq $0, %rax
+    #movq $testS, %rdi                       # LEGACY COMMENT, DO NOT TOUCH
+    #call printf
 
     jmp detect
 
     initialiseMines:
     call mineInit                           # Initialize mines around cursor
 
-    
     call calcNumbers                        #calc the num
     notq (%rsp)                             # Set dig happened to 1
 
