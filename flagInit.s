@@ -12,7 +12,7 @@ pushq %rbp
 movq %rsp, %rbp
 
 # Initialize border flags
-    leaq mineArray(%rip), %rdi              # Load address of mineArray in rdi
+    leaq mineArray, %rdi              # Load address of mineArray in rdi
 
     # Initialize cursor flag
         incq %rdi                           # Move to first cell flags in mineArray
@@ -22,10 +22,10 @@ movq %rsp, %rbp
     movq $0, %r8                            # Initialize column counter
     movq $0, %r9                            # Initialize row counter
 
-    leaq height(%rip), %rcx                 # Load height address in rcx
+    leaq height, %rcx                 # Load height address in rcx
     movzb (%rcx), %rcx                      # Store height in rcx
 
-    leaq width(%rip), %rax                  # Load width address in rax
+    leaq width, %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
 
 columnIterator:
@@ -69,10 +69,10 @@ mineInit:
     pushq %r12 #save r12 to free it up
 
 
-    leaq width(%rip), %rax
+    leaq width, %rax
     movzb (%rax), %rax #load width value into rax
 
-    leaq height(%rip), %rcx
+    leaq height, %rcx
     movzb (%rcx), %rcx #load height value into rax
 
     movq $0, %rdx
@@ -88,10 +88,10 @@ mineInit:
     movq %rax, %r12 # divisor number to r12
 
 BOUNDARY_TREE:
-    leaq width(%rip), %rdi
+    leaq width, %rdi
     movzb (%rdi), %rdi                      # Store width value into rdi
 
-    leaq height(%rip), %rsi
+    leaq height, %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
     movq $0, %rdx
@@ -101,7 +101,7 @@ BOUNDARY_TREE:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
 
@@ -113,7 +113,7 @@ BOUNDARY_TREE:
     subq %rdi, %r9
 
     decq %rdi
-    leaq mineArray(%rip), %r10              # Check if top cell exists
+    leaq mineArray, %r10              # Check if top cell exists
     cmpq %r10, %r8
     jl checkBottom
 
@@ -147,7 +147,7 @@ checkBottom:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     incq %r8
@@ -190,7 +190,7 @@ checkLeft:
     incq %rdi
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
     incq %r8
@@ -219,7 +219,7 @@ checkRight:
 BOUNDARY_TREE_END:
 
 done:
-    leaq mines(%rip), %rcx
+    leaq mines, %rcx
     movzw (%rcx), %rcx
 
     loop:
@@ -230,7 +230,7 @@ done:
 
         #random cell selection is in rax
         
-        leaq mineArray(%rip), %rdx
+        leaq mineArray, %rdx
 
         addq %rax, %rdx
         addq %rax, %rdx

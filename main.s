@@ -35,20 +35,20 @@ detect:
 
     # Read 3 bytes from stdin
     mov $0, %rdi                        # File descriptor 0 (stdin)
-    lea buffer(%rip), %rsi              # Address of buffer
+    lea buffer, %rsi              # Address of buffer
     mov $3, %rdx                        # Read 3 bytes (escape sequence length)
     mov $0, %rax                        # Syscall number for read
     syscall                             # Call read
 
     # Check for escape sequence (0x1B)
-    cmpb $0x1B, buffer(%rip)            # Compare first byte with 0x1B
+    cmpb $0x1B, buffer            # Compare first byte with 0x1B
     jne not_arrow                       # If not 0x1B, it's not an arrow key
 
     # Check second byte '[' (0x5B)
-    cmpb $0x5B, buffer+1(%rip)
+    cmpb $0x5B, buffer+1
     jne not_arrow
 
-    leaq mineArray(%rip), %rdi
+    leaq mineArray, %rdi
     addq %rbx, %rdi
     addq %rbx, %rdi
     incq %rdi
@@ -56,21 +56,21 @@ detect:
     andb $254, (%rdi)             
 
     # Check for the specific arrow key (third byte)
-    cmpb $0x41, buffer+2(%rip)              # Up arrow: 0x41
+    cmpb $0x41, buffer+2              # Up arrow: 0x41
     je up_arrow
-    cmpb $0x42, buffer+2(%rip)              # Down arrow: 0x42
+    cmpb $0x42, buffer+2              # Down arrow: 0x42
     je down_arrow
-    cmpb $0x43, buffer+2(%rip)              # Right arrow: 0x43
+    cmpb $0x43, buffer+2              # Right arrow: 0x43
     je right_arrow
-    cmpb $0x44, buffer+2(%rip)              # Left arrow: 0x44
+    cmpb $0x44, buffer+2              # Left arrow: 0x44
     je left_arrow
 
 not_arrow:
     # Handle non-arrow keys
-    cmpb $'d, buffer(%rip)
+    cmpb $'d, buffer
     jne flag
 
-    leaq mineArray(%rip), %rdi              
+    leaq mineArray, %rdi              
     addq %rbx, %rdi
     addq %rbx, %rdi
     incq %rdi
@@ -117,10 +117,10 @@ not_arrow:
 
     jmp detect
 flag:
-    cmpb $'f, buffer(%rip)
+    cmpb $'f, buffer
     jne detect
     
-    leaq mineArray(%rip), %rdi
+    leaq mineArray, %rdi
     addq %rbx, %rdi
     addq %rbx, %rdi
     incq %rdi
@@ -151,7 +151,7 @@ flag:
 
 up_arrow:
     movq %rbx, %rax
-    leaq width(%rip), %rcx                  # Load width address in rcx
+    leaq width, %rcx                  # Load width address in rcx
     movzb (%rcx), %rcx                      # Store width in rcx
     movq $0, %rdx                           # Clear rdx
 
@@ -161,7 +161,7 @@ up_arrow:
     cmpq $0, %rax
     jne arrowDone
     
-    leaq height(%rip), %rdx                 # Load height address in rdx
+    leaq height, %rdx                 # Load height address in rdx
     movzb (%rdx), %rdx                      # Store height in rdx
     
     upLoop:
@@ -176,11 +176,11 @@ jmp arrowDone
 
 down_arrow:
     movq %rbx, %rax
-    leaq width(%rip), %rcx                  # Load width address in rcx
+    leaq width, %rcx                  # Load width address in rcx
     movzb (%rcx), %rcx                      # Store width in rcx
     movq $0, %rdx                           # Clear rdx
 
-    leaq height(%rip), %r8                  # Load height address in r8
+    leaq height, %r8                  # Load height address in r8
     movzb (%r8), %r8                        # Store height in r8
     decq %r8                                # Decrement height 
 
@@ -205,7 +205,7 @@ jmp arrowDone
 right_arrow:
 
     movq %rbx, %rax
-    leaq width(%rip), %rcx                  # Load width address in rcx
+    leaq width, %rcx                  # Load width address in rcx
     movzb (%rcx), %rcx                      # Store width in rcx
     movq $0, %rdx                           # Clear rdx
 
@@ -224,7 +224,7 @@ jmp arrowDone
 
 left_arrow:
     movq %rbx, %rax
-    leaq width(%rip), %rcx                  # Load width address in rcx
+    leaq width, %rcx                  # Load width address in rcx
     movzb (%rcx), %rcx                      # Store width in rcx
     movq $0, %rdx                           # Clear rdx
 
@@ -253,7 +253,7 @@ done:
     call exit
     
 arrowDone:
-    leaq mineArray(%rip), %rdi              # Load address of mineArray in rdi
+    leaq mineArray, %rdi              # Load address of mineArray in rdi
     addq %rbx, %rdi                         # Move to cell after cursor
     addq %rbx, %rdi
 

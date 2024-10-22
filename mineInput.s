@@ -19,36 +19,36 @@ getMines:
 invalidReturn:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea mine_prompt(%rip), %rsi             # Address of message
+    lea mine_prompt, %rsi             # Address of message
     mov $59, %rdx                           # Length of message
     syscall
 
     mov $0, %rax                            # Syscall number for read
     mov $0, %rdi                            # File descriptor 0 (stdin)
-    lea buffer(%rip), %rsi                  # Address of buffer
+    lea buffer, %rsi                  # Address of buffer
     mov $5, %rdx                            # Read 2 bytes
     syscall                                 # Call read
 
     movq $0, %rax                           # Preparing registers for multiplication
     movq $0, %rdx
-    lea buffer(%rip), %r8                   # Load buffer into r8 for loop usage
+    lea buffer, %r8                   # Load buffer into r8 for loop usage
     movq $10, %r10                          # Store 10 into r10 for multiplication
-    cmpb $'0, buffer(%rip)                  # Check if first character is 0
+    cmpb $'0, buffer                  # Check if first character is 0
     je invalidMineInput                     # If it is, it's invalid
 
 #digit counting
-    cmpb $'\n, buffer(%rip)                 # Check if first character is newline
+    cmpb $'\n, buffer                 # Check if first character is newline
     je invalidMineInput                     # If it is, it's invalid
-    cmpb $'\n, buffer+1(%rip)               # Check if second character is newline
+    cmpb $'\n, buffer+1               # Check if second character is newline
     movq $1, %r9                            # If it is, set digit counter to 1 and loop
     je bufferChecked
-    cmpb $'\n, buffer+2(%rip)               # Check if third character is newline
+    cmpb $'\n, buffer+2               # Check if third character is newline
     movq $2, %r9                            # If it is, set digit counter to 2 and loop
     je bufferChecked
-    cmpb $'\n, buffer+3(%rip)               # Check if fourth character is newline
+    cmpb $'\n, buffer+3               # Check if fourth character is newline
     movq $3, %r9                            # If it is, set digit counter to 3 and loop
     je bufferChecked
-    cmpb $'\n, buffer+4(%rip)               # Check if fifth character is newline
+    cmpb $'\n, buffer+4               # Check if fifth character is newline
     movq $4, %r9                            # If it is, set digit counter to 4 and loop
     je bufferChecked
 jmp flush                                   # If it doesn't include a newline, flush the buffer
@@ -78,12 +78,12 @@ done:
 
     movq $0, %rax                           # Preparing registers for multiplication
     movq $0, %rdx
-    movb width(%rip), %al                   # Load width into rax
-    mulb height(%rip)                       # Multiply by height
+    movb width, %al                   # Load width into rax
+    mulb height                       # Multiply by height
     
     cmpq %rax, %r8                          # Check if mine count is within board size
     jg invalidMineInput
-    movw %r8w, mines(%rip)                   # Store mine count
+    movw %r8w, mines                   # Store mine count
 
     #epilogue
     movq %rbp, %rsp
@@ -94,18 +94,18 @@ ret
 flush:
     mov $0, %rax                            # Syscall number for read
     mov $0, %rdi                            # File descriptor 0 (stdin)
-    lea buffer(%rip), %rsi                  # Address of message
+    lea buffer, %rsi                  # Address of message
     mov $1, %rdx                            # Length of message
     syscall
 
-    cmpb $'\n, buffer(%rip)                 # Check if the newline has been found
+    cmpb $'\n, buffer                 # Check if the newline has been found
     jne flush
 
 invalidMineInput:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea invalidMineMessage(%rip), %rsi      # Address of message
+    lea invalidMineMessage, %rsi      # Address of message
     mov $32, %rdx                           # Length of message
     syscall
 

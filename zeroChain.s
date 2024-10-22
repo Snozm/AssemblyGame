@@ -11,10 +11,10 @@ zeroChainer:
     pushq %r14
     pushq %rbx
 
-    leaq width(%rip), %rdi
+    leaq width, %rdi
     movzb (%rdi), %rdi                      # Store width value into rdi
 
-    leaq height(%rip), %rsi
+    leaq height, %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
     movq $0, %rdx
@@ -25,7 +25,7 @@ zeroChainer:
     loopHead:
     movq $0, %rbx
 
-    leaq mineArray(%rip), %r15
+    leaq mineArray, %r15
     movq $0, %r14
 
     loop:

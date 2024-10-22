@@ -49,14 +49,14 @@ draw:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi               # Address of white text
+    lea whiteText, %rsi               # Address of white text
     mov $24, %rdx                           # Length of message
     syscall
 
     pushq %rbx                              # Save registers
     pushq $0                                # Push 0 for stage counter
 
-    leaq mineArray(%rip), %rbx              # Load address of mineArray in rbx
+    leaq mineArray, %rbx              # Load address of mineArray in rbx
 
 rowIterator:
     cmpq $0, (%rsp)                         # Check if stage counter is 0
@@ -79,20 +79,20 @@ rowIterator:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea yellowText(%rip), %rsi              # Address of yellow text
+    lea yellowText, %rsi              # Address of yellow text
     mov $25, %rdx                           # Length of message
     syscall
 
     notCursorMiddle:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellWall(%rip), %rsi                # Address of cell wall
+    lea cellWall, %rsi                # Address of cell wall
     mov $1, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi               # Address of white text
+    lea whiteText, %rsi               # Address of white text
     mov $24, %rdx                           # Length of message
     syscall
     
@@ -114,13 +114,13 @@ rowIterator:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellPadding(%rip), %rsi             # Address of empty space
+    lea cellPadding, %rsi             # Address of empty space
     mov $1, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellPadding(%rip), %rsi             # Address of padding
+    lea cellPadding, %rsi             # Address of padding
     mov $1, %rdx                            # Length of message
     syscall
 
@@ -129,25 +129,25 @@ rowIterator:
     flaggedCell:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea redText(%rip), %rsi                 # Address of red text
+    lea redText, %rsi                 # Address of red text
     mov $20, %rdx                           # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea orangeBackground(%rip), %rsi        # Address of orange background
+    lea orangeBackground, %rsi        # Address of orange background
     mov $17, %rdx                           # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellPadding(%rip), %rsi             # Address of empty space
+    lea cellPadding, %rsi             # Address of empty space
     mov $1, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea flagSymbol(%rip), %rsi              # Address of flag
+    lea flagSymbol, %rsi              # Address of flag
     mov $1, %rdx                            # Length of message
     syscall
 
@@ -161,7 +161,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi           # Address of white text
+    lea whiteText, %rsi           # Address of white text
     mov $24, %rdx                       # Length of message
     syscall
 
@@ -170,7 +170,7 @@ rowIterator:
     flaggedCursor:
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea yellowText(%rip), %rsi          # Address of yellow text
+    lea yellowText, %rsi          # Address of yellow text
     mov $25, %rdx                       # Length of message
     syscall
 
@@ -180,7 +180,7 @@ rowIterator:
     openedCell:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellPadding(%rip), %rsi             # Address of empty space
+    lea cellPadding, %rsi             # Address of empty space
     mov $1, %rdx                            # Length of message
     syscall
     
@@ -190,7 +190,7 @@ rowIterator:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellPadding(%rip), %rsi             # Address of empty space
+    lea cellPadding, %rsi             # Address of empty space
     mov $1, %rdx                            # Length of message
     syscall
 
@@ -203,7 +203,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea blueText(%rip), %rsi            # Address of blue text
+    lea blueText, %rsi            # Address of blue text
     mov $20, %rdx                       # Length of message
     syscall
 
@@ -216,7 +216,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea greenText(%rip), %rsi           # Address of green text
+    lea greenText, %rsi           # Address of green text
     mov $20, %rdx                       # Length of message
     syscall
 
@@ -229,7 +229,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea redText(%rip), %rsi             # Address of red text
+    lea redText, %rsi             # Address of red text
     mov $20, %rdx                       # Length of message
     syscall
 
@@ -242,7 +242,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea purpleText(%rip), %rsi          # Address of purple text
+    lea purpleText, %rsi          # Address of purple text
     mov $22, %rdx                       # Length of message
     syscall
 
@@ -255,7 +255,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea pinkText(%rip), %rsi            # Address of pink text
+    lea pinkText, %rsi            # Address of pink text
     mov $24, %rdx                       # Length of message
     syscall
 
@@ -268,7 +268,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea cyanText(%rip), %rsi          # Address of cyan text
+    lea cyanText, %rsi          # Address of cyan text
     mov $22, %rdx                       # Length of message
     syscall
 
@@ -281,7 +281,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi           # Address of white text
+    lea whiteText, %rsi           # Address of white text
     mov $24, %rdx                       # Length of message
     syscall
 
@@ -294,7 +294,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea brownText(%rip), %rsi           # Address of brown text
+    lea brownText, %rsi           # Address of brown text
     mov $22, %rdx                       # Length of message
     syscall
 
@@ -315,7 +315,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi           # Address of white text
+    lea whiteText, %rsi           # Address of white text
     mov $24, %rdx                       # Length of message
     syscall
 
@@ -324,7 +324,7 @@ rowIterator:
     openCursor:
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea yellowText(%rip), %rsi          # Address of yellow text
+    lea yellowText, %rsi          # Address of yellow text
     mov $25, %rdx                       # Length of message
     syscall
 
@@ -332,7 +332,7 @@ rowIterator:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellPadding(%rip), %rsi             # Address of empty space
+    lea cellPadding, %rsi             # Address of empty space
     mov $1, %rdx                            # Length of message
     syscall
 
@@ -346,7 +346,7 @@ rowIterator:
 
     mov $1, %rax                        # Syscall number for write
     mov $1, %rdi                        # File descriptor 1 (stdout)
-    lea yellowText(%rip), %rsi          # Address of yellow text
+    lea yellowText, %rsi          # Address of yellow text
     mov $25, %rdx                       # Length of message
     syscall
 
@@ -369,7 +369,7 @@ rowIterator:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellCorner(%rip), %rsi              # Address of top corner
+    lea cellCorner, %rsi              # Address of top corner
     mov $1, %rdx                            # Length of message
     syscall
 
@@ -388,7 +388,7 @@ rowIterator:
 
         mov $1, %rax                        # Syscall number for write
         mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea yellowText(%rip), %rsi          # Address of yellow text
+        lea yellowText, %rsi          # Address of yellow text
         mov $25, %rdx                       # Length of message
         syscall
         
@@ -397,14 +397,14 @@ rowIterator:
         notCursorRowEnd:
         mov $1, %rax                        # Syscall number for write
         mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea whiteText(%rip), %rsi           # Address of white text
+        lea whiteText, %rsi           # Address of white text
         mov $24, %rdx                       # Length of message
         syscall
 
         cursorRowEnd:
         mov $1, %rax                        # Syscall number for write
         mov $1, %rdi                        # File descriptor 1 (stdout)
-        lea cellWall(%rip), %rsi            # Address of cell wall
+        lea cellWall, %rsi            # Address of cell wall
         mov $1, %rdx                        # Length of message
         syscall
 
@@ -424,7 +424,7 @@ rowIterator:
     cmpb $16, %al                           # Compare bottom border flag with 1
 jne rowIterator
 
-    leaq width(%rip), %rax                  # Load width address in rax
+    leaq width, %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
 
     subq %rax, %rbx                         # Move to start of bottom row in mineArray
@@ -443,7 +443,7 @@ bottomLoop:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea yellowText(%rip), %rsi               # Address of white text
+    lea yellowText, %rsi               # Address of white text
     mov $25, %rdx                           # Length of message
     syscall
 
@@ -452,19 +452,19 @@ bottomLoop:
     notCursorBottom:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellCorner(%rip), %rsi              # Address of bottom border
+    lea cellCorner, %rsi              # Address of bottom border
     mov $1, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea reset(%rip), %rsi                   # Address of top border
+    lea reset, %rsi                   # Address of top border
     mov $4, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi               # Address of white text
+    lea whiteText, %rsi               # Address of white text
     mov $24, %rdx                           # Length of message
     syscall
 
@@ -475,14 +475,14 @@ bottomLoop:
     printBottom:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellCorner(%rip), %rsi              # Address of bottom border
+    lea cellCorner, %rsi              # Address of bottom border
     mov $1, %rdx                            # Length of message
     syscall
 
     printBottomHalf:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellTop(%rip), %rsi                 # Address of top border
+    lea cellTop, %rsi                 # Address of top border
     mov $3, %rdx                            # Length of message
     syscall
 
@@ -500,7 +500,7 @@ jmp bottomLoop
 bottomEnd:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellCorner(%rip), %rsi              # Address of bottom corner
+    lea cellCorner, %rsi              # Address of bottom corner
     mov $1, %rdx                            # Length of message
     syscall
 
@@ -516,7 +516,7 @@ bottomEnd:
 ret
 
 rowIteratorTemp:
-    leaq width(%rip), %rax                  # Load width address in rax
+    leaq width, %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
 
     subq %rax, %rbx                         # Move to start of row in mineArray
@@ -539,7 +539,7 @@ chooseBackground:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea lightGrayBackground(%rip), %rsi     # Address of top border
+    lea lightGrayBackground, %rsi     # Address of top border
     mov $19, %rdx                           # Length of message
     syscall
 
@@ -552,7 +552,7 @@ ret
 opened:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea darkGrayBackground(%rip), %rsi      # Address of top border
+    lea darkGrayBackground, %rsi      # Address of top border
     mov $19, %rdx                           # Length of message
     syscall
 
@@ -569,19 +569,19 @@ newLine:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea newline(%rip), %rsi                 # Address of newline
+    lea newline, %rsi                 # Address of newline
     mov $1, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea reset(%rip), %rsi                   # Address of top border
+    lea reset, %rsi                   # Address of top border
     mov $4, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi               # Address of white text
+    lea whiteText, %rsi               # Address of white text
     mov $24, %rdx                           # Length of message
     syscall
 
@@ -608,14 +608,14 @@ cursorTopLogic:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea yellowText(%rip), %rsi               # Address of white text
+    lea yellowText, %rsi               # Address of white text
     mov $25, %rdx                           # Length of message
     syscall
 
     jmp printTop
 
     notCursor:
-    leaq width(%rip), %rax                  # Load width address in rax
+    leaq width, %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
 
     movq %rbx, %rcx                         # Store top cell address in rcx
@@ -623,7 +623,7 @@ cursorTopLogic:
     subq %rax, %rcx                         # Check if cell is in top row
     subq %rax, %rcx
 
-    leaq mineArray(%rip), %rdx              # Load mineArray address in rdx
+    leaq mineArray, %rdx              # Load mineArray address in rdx
     cmpq %rdx, %rcx              # Compare cell with first cell in mineArray
     
     jl printTopWhite
@@ -638,19 +638,19 @@ cursorTopLogic:
     printTopWhite:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellCorner(%rip), %rsi              # Address of bottom border
+    lea cellCorner, %rsi              # Address of bottom border
     mov $1, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea reset(%rip), %rsi                   # Address of top border
+    lea reset, %rsi                   # Address of top border
     mov $4, %rdx                            # Length of message
     syscall
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea whiteText(%rip), %rsi               # Address of white text
+    lea whiteText, %rsi               # Address of white text
     mov $24, %rdx                           # Length of message
     syscall
 
@@ -662,21 +662,21 @@ cursorTopLogic:
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea yellowText(%rip), %rsi               # Address of white text
+    lea yellowText, %rsi               # Address of white text
     mov $25, %rdx                           # Length of message
     syscall
 
     printTop:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellCorner(%rip), %rsi              # Address of bottom border
+    lea cellCorner, %rsi              # Address of bottom border
     mov $1, %rdx                            # Length of message
     syscall
 
     printTopHalf:
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
-    lea cellTop(%rip), %rsi                 # Address of top border
+    lea cellTop, %rsi                 # Address of top border
     mov $3, %rdx                            # Length of message
     syscall
 

@@ -13,10 +13,10 @@ movq $0, %rbx
 BOUNDARY_TREE:
     movq $48, %r11                           #init mine counter
 
-    leaq width(%rip), %rdi
+    leaq width, %rdi
     movzb (%rdi), %rdi                      # Store width value into rdi
 
-    leaq height(%rip), %rsi
+    leaq height, %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
     movq $0, %rdx
@@ -26,7 +26,7 @@ BOUNDARY_TREE:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
 
@@ -39,7 +39,7 @@ BOUNDARY_TREE:
     
 
     decq %rdi
-    leaq mineArray(%rip), %r10              # Check if top cell exists
+    leaq mineArray, %r10              # Check if top cell exists
     cmpq %r10, %r8
     jl checkBottom
 
@@ -89,7 +89,7 @@ checkBottom:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     incq %r8
@@ -148,7 +148,7 @@ checkLeft:
     incq %rdi
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
     incq %r8
@@ -184,7 +184,7 @@ checkRight:
     incq %r11
 
 BOUNDARY_TREE_END:
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
 

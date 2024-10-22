@@ -10,10 +10,10 @@ digChording:
     BOUNDARY_TREE:
     movq $0, %r11                           # Initialize flag counter
 
-    leaq width(%rip), %rdi
+    leaq width, %rdi
     movzb (%rdi), %rdi                      # Store width value into rdi
 
-    leaq height(%rip), %rsi
+    leaq height, %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
     movq $0, %rdx
@@ -23,7 +23,7 @@ digChording:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
 
@@ -37,7 +37,7 @@ digChording:
     
 
     decq %rdi
-    leaq mineArray(%rip), %r10              # Check if top cell exists
+    leaq mineArray, %r10              # Check if top cell exists
     cmpq %r10, %r8
     jl checkBottom
 
@@ -87,7 +87,7 @@ checkBottom:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     incq %r8
@@ -146,7 +146,7 @@ checkLeft:
     incq %rdi
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
     incq %r8
@@ -183,7 +183,7 @@ checkRight:
 
 BOUNDARY_TREE_END:
 
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
 
@@ -197,10 +197,10 @@ BOUNDARY_TREE_END:
     jne end
 
 OPEN_CELLS:
-    leaq width(%rip), %rdi
+    leaq width, %rdi
     movzb (%rdi), %rdi                      # Store width value into rdi
 
-    leaq height(%rip), %rsi
+    leaq height, %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
     movq $0, %rdx
@@ -210,7 +210,7 @@ OPEN_CELLS:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
 
@@ -221,7 +221,7 @@ OPEN_CELLS:
     subq %rdi, %r9
 
     decq %rdi
-    leaq mineArray(%rip), %r10              # open if top cell exists
+    leaq mineArray, %r10              # open if top cell exists
     cmpq %r10, %r8
     jl openBottom
 
@@ -311,7 +311,7 @@ openBottom:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     incq %r8
@@ -411,7 +411,7 @@ openLeft:
     incq %rdi
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
     incq %r8
@@ -519,10 +519,10 @@ flagChording:
 
     movq $0, %r11                           # Initialize closed cell counter
 
-    leaq width(%rip), %rdi
+    leaq width, %rdi
     movzb (%rdi), %rdi                      # Store width value into rdi
 
-    leaq height(%rip), %rsi
+    leaq height, %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
     movq $0, %rdx
@@ -532,7 +532,7 @@ flagChording:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
 
@@ -546,7 +546,7 @@ flagChording:
     
 
     decq %rdi
-    leaq mineArray(%rip), %r10              # Check if top cell exists
+    leaq mineArray, %r10              # Check if top cell exists
     cmpq %r10, %r8
     jl checkClosedBottom
 
@@ -596,7 +596,7 @@ checkClosedBottom:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     incq %r8
@@ -655,7 +655,7 @@ checkClosedLeft:
     incq %rdi
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
     incq %r8
@@ -692,7 +692,7 @@ checkClosedRight:
 
 closedEnd:
 
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
     
@@ -703,10 +703,10 @@ closedEnd:
     jne endFlag
 
 
-    leaq width(%rip), %rdi
+    leaq width, %rdi
     movzb (%rdi), %rdi                      # Store width value into rdi
 
-    leaq height(%rip), %rsi
+    leaq height, %rsi
     movzb (%rsi), %rsi                      # Store height value into rsi
 
     movq $0, %rdx
@@ -716,7 +716,7 @@ closedEnd:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
 
@@ -730,7 +730,7 @@ closedEnd:
     
 
     decq %rdi
-    leaq mineArray(%rip), %r10              # flag if top cell exists
+    leaq mineArray, %r10              # flag if top cell exists
     cmpq %r10, %r8
     jl flagClosedBottom
 
@@ -782,7 +782,7 @@ flagClosedBottom:
 
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     incq %r8
@@ -843,7 +843,7 @@ flagClosedLeft:
     incq %rdi
     movq %rbx, %r9                          # Store cursor in r9
     
-    leaq mineArray(%rip), %r8
+    leaq mineArray, %r8
     addq %rbx, %r8                          # Store cursor address in %r8
     addq %rbx, %r8
     incq %r8
