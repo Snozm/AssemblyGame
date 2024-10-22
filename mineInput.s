@@ -80,6 +80,8 @@ done:
     movq $0, %rdx
     movb width, %al                   # Load width into rax
     mulb height                       # Multiply by height
+
+    subq $9, %rax                       #subtract the guaranteed safe cells from potential mine placement count
     
     cmpq %rax, %r8                          # Check if mine count is within board size
     jg invalidMineInput
