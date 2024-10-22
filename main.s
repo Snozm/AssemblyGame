@@ -29,9 +29,13 @@ main:
     pushq $0                                # Stack alignment
 
     movq $0, %rbx                           # Initialize cursor index to 1
+    movq $0, %rsi
 
 detect:
     call draw
+
+    cmpq $1, %rsi
+    je done
 
     # Read 3 bytes from stdin
     mov $0, %rdi                        # File descriptor 0 (stdin)
@@ -93,19 +97,30 @@ not_arrow:
 
     decq %rdi
     cmpb $'0, (%rdi)
-    jne detect
+    jne checkMine
     call zeroChainer
     
-    movq $0, %rax
-    movq $testS, %rdi                       # LEGACY COMMENT, DO NOT TOUCH
-    call printf
+    #movq $0, %rax
+    #movq $testS, %rdi                       # LEGACY COMMENT, DO NOT TOUCH
+    #call printf
+
+    jmp detect
+
+    checkMine:
+    cmpb $'#, (%rdi)
+    jne detect
+
+    call openMineCheck
+
+    #call draw
 
     jmp detect
 
     digChorder:
 
     call digChording
-    jmp detect
+    call openMineCheck
+    je detect
 
     initialiseMines:
     call mineInit                           # Initialize mines around cursor

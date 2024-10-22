@@ -1,4 +1,6 @@
 .text
+lose:
+    .ascii "You lose. Try again? (y/n)\n"
 flagSymbol:
     .ascii "P"
 cellTop:
@@ -44,6 +46,9 @@ draw:
     #prologue
     pushq %rbp
     movq %rsp, %rbp
+
+    pushq %rsi
+    pushq %rsi
 
     call clear
 
@@ -508,6 +513,20 @@ bottomEnd:
 
     popq %rbx                               # Restore registers
     popq %rbx                               # Restore registers
+
+    popq %rsi
+
+    cmpq $1, %rsi
+    jne endDraw
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea lose, %rsi                          # Address of lose
+    mov $27, %rdx                           # Length of message
+    syscall
+
+endDraw:
+    popq %rsi
 
     #epilogue
     movq %rbp, %rsp
