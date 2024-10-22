@@ -129,8 +129,12 @@ flag:
 
     andb $4, %al                            # Check if cell is opened
     cmpb $4, %al
-    je detect
+    jne flagCell
 
+    call flagChording
+    jmp detect
+
+    flagCell:
     movzb (%rdi), %rax                      # Load current cell flags
 
     andb $8, %al                            # Check if cell is flagged
