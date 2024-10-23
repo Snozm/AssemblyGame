@@ -18,6 +18,7 @@ borderInit:
 pushq %rbp
 movq %rsp, %rbp
 
+
 # Initialize border flags
     leaq mineArray, %rdi              # Load address of mineArray in rdi
 
@@ -34,6 +35,7 @@ movq %rsp, %rbp
 
     leaq width, %rax                  # Load width address in rax
     movzb (%rax), %rax                      # Store width in rax
+    
 
 columnIterator:
     incq %r8                                # Increment column counter
@@ -60,7 +62,7 @@ columnIterator:
     incq %rdi                               # Move to next cell in mineArray
 
     movq $0, %r9                            # Reset row counter
-
+    
     cmpq %rcx, %r8                          # Compare column counter with height
 jne columnIterator 
 

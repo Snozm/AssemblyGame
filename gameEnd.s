@@ -43,7 +43,7 @@ checkLoop:
 
     pushq %rbx
     pushq %r8
-    movq $1, %rsi
+    movq $1, %r9
     jmp revealMines
 
 checkDone:
@@ -55,7 +55,7 @@ checkDone:
     cmpq %rcx, %rdx
     jne leave
     
-    movq $2, %rsi
+    movq $2, %r9
 
 leave:
     popq %rbx

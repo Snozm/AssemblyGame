@@ -20,8 +20,6 @@ restart:
     call getMines
 replay:
 
-    
-
     call borderInit#segfault
 
 
@@ -39,10 +37,10 @@ detect:
     call openMineCheck
     call draw
 
-    cmpq $1, %rsi
+    cmpq $1, %r9
     je done
 
-    cmpq $2, %rsi
+    cmpq $2, %r9
     je done
 
     # Read 3 bytes from stdin
@@ -293,6 +291,8 @@ done:
         jle arrClear
 
         movq %rbp, %rsp
+
+        jmp restart                         #CODE FOR REPLAY BROKEN BEYOND THIS POINT
 
         mov $1, %rax                             # Syscall number for write
         mov $1, %rdi                             # File descriptor 1 (stdout)

@@ -51,8 +51,8 @@ draw:
     pushq %rbp
     movq %rsp, %rbp
 
-    pushq %rsi
-    pushq %rsi
+    pushq %r9
+    pushq %r9
 
     call clear
 
@@ -525,11 +525,11 @@ bottomEnd:
     popq %rbx                               # Restore registers
     popq %rbx                               # Restore registers
 
-    popq %rsi
+    popq %r9
 
-    pushq %rsi
+    pushq %r9
 
-    cmpq $1, %rsi
+    cmpq $1, %r9
     jne checkWin
 
     mov $1, %rax                            # Syscall number for write
@@ -539,9 +539,9 @@ bottomEnd:
     syscall
 
 checkWin:
-    popq %rsi
+    popq %r9
 
-    cmpq $2, %rsi
+    cmpq $2, %r9
     jne endDraw
 
     mov $1, %rax                            # Syscall number for write
@@ -551,7 +551,7 @@ checkWin:
     syscall    
 
 endDraw:
-    popq %rsi
+    popq %r9
 
     #epilogue
     movq %rbp, %rsp
