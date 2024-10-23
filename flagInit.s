@@ -1,7 +1,14 @@
+#.bss
+
+#testS: .skip 1
+
 .text
 
  formatString:
     .asciz "%lu\n"
+
+
+
 .global borderInit
 .global mineInit
 

@@ -5,7 +5,8 @@ mineArray:
     .skip 3200   # Reserve space for 40x40 mine array
 .text
 
-testS: .asciz "test"
+#testS: .asciz "test"
+stngQuery: .ascii "Would you like to keep board settings? (Y/n)\n"
 
 .global main
 .global mineArray
@@ -13,12 +14,15 @@ main:
     #prologue
     pushq %rbp
 	movq %rsp, %rbp
-
+restart:
     call getDim
 
     call getMines
+replay:
 
-    call borderInit
+    
+
+    call borderInit#segfault
 
 
 
@@ -259,6 +263,73 @@ done:
 
     popq %rbx                              # Restore cursor index register
     popq %rbx                              # Restore cursor index register
+
+    mov $0, %rax                        # Syscall number for read
+    mov $0, %rdi                        # File descriptor 0 (stdin)
+    lea buffer, %rsi                    # Address of buffer
+    mov $1, %rdx                        # Read 3 bytes (escape sequence length)
+    syscall                             # Call read
+
+    cmpb $'Y, buffer
+    jne donePlus
+
+        flush:
+            mov $0, %rax                             # Syscall number for write
+            mov $0, %rdi                             # File descriptor 1 (stdout)
+            lea buffer, %rsi                   # Address of message
+            mov $1, %rdx                            # Length of message
+            syscall
+
+            cmpb $'\n, buffer                 # Check if the newline has been found
+        jne flush
+
+        leaq mineArray, %rax
+        arrClear: #clear 400 consecutive quads
+            movq $0, (%rax)
+            addq $8, %rax
+            cmpq mineArray+3200, %rax
+        jle arrClear
+
+        movq %rbp, %rsp
+
+        mov $1, %rax                             # Syscall number for write
+        mov $1, %rdi                             # File descriptor 1 (stdout)
+        lea stngQuery, %rsi                   # Address of message
+        mov $45, %rdx                            # Length of message
+        syscall
+
+        mov $0, %rax                        # Syscall number for read
+        mov $0, %rdi                        # File descriptor 0 (stdin)
+        lea buffer, %rsi                    # Address of buffer
+        mov $1, %rdx                        # Read 3 bytes (escape sequence length)
+        syscall                             # Call read
+
+        flushTwo:
+            mov $0, %rax                             # Syscall number for write
+            mov $0, %rdi                             # File descriptor 1 (stdout)
+            lea buffer+2, %rsi                   # Address of message
+            mov $1, %rdx                            # Length of message
+            syscall
+
+            cmpb $'\n, buffer+2                 # Check if the newline has been found
+        jne flushTwo
+
+        cmpb $'Y, buffer
+        je replay
+
+    jmp restart
+
+donePlus:
+
+    flushPlus:
+        mov $0, %rax                             # Syscall number for write
+        mov $0, %rdi                             # File descriptor 1 (stdout)
+        lea buffer, %rsi                   # Address of message
+        mov $1, %rdx                            # Length of message
+        syscall
+
+        cmpb $'\n, buffer                 # Check if the newline has been found
+    jne flushPlus
 
     #epilogue
     movq %rbp, %rsp

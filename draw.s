@@ -1,6 +1,6 @@
 .text
 lose:
-    .ascii "You lose. Try again? (y/n)\n"
+    .ascii "You lose. Try again? (Y/n)\n"
 flagSymbol:
     .ascii "P"
 cellTop:
