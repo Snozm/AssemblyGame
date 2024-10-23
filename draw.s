@@ -1,8 +1,12 @@
 .text
 lose:
-    .ascii "You lose. Try again? (y/n)\n"
+    .ascii "You lose! Try again? (y/n)\n"
+win:
+    .ascii "You win! Try again? (Y/n)\n"
 flagSymbol:
     .ascii "P"
+mineCount:
+    .asciz "Remaining mines: %d\n"
 cellTop:
     .ascii "---"
 cellCorner:
@@ -57,6 +61,13 @@ draw:
     lea whiteText, %rsi               # Address of white text
     mov $24, %rdx                           # Length of message
     syscall
+
+    call countFlags
+
+    movq %rax, %rsi
+    movq $0, %rax
+    movq $mineCount, %rdi
+    call printf
 
     pushq %rbx                              # Save registers
     pushq $0                                # Push 0 for stage counter
@@ -516,14 +527,28 @@ bottomEnd:
 
     popq %rsi
 
+    pushq %rsi
+
     cmpq $1, %rsi
-    jne endDraw
+    jne checkWin
 
     mov $1, %rax                            # Syscall number for write
     mov $1, %rdi                            # File descriptor 1 (stdout)
     lea lose, %rsi                          # Address of lose
     mov $27, %rdx                           # Length of message
     syscall
+
+checkWin:
+    popq %rsi
+
+    cmpq $2, %rsi
+    jne endDraw
+
+    mov $1, %rax                            # Syscall number for write
+    mov $1, %rdi                            # File descriptor 1 (stdout)
+    lea win, %rsi                          # Address of lose
+    mov $26, %rdx                           # Length of message
+    syscall    
 
 endDraw:
     popq %rsi

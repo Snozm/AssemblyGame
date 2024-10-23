@@ -32,9 +32,13 @@ main:
     movq $0, %rsi
 
 detect:
+    call openMineCheck
     call draw
 
     cmpq $1, %rsi
+    je done
+
+    cmpq $2, %rsi
     je done
 
     # Read 3 bytes from stdin
@@ -112,15 +116,13 @@ not_arrow:
 
     call openMineCheck
 
-    #call draw
-
     jmp detect
 
     digChorder:
 
     call digChording
     call openMineCheck
-    je detect
+    jmp detect
 
     initialiseMines:
     call mineInit                           # Initialize mines around cursor
